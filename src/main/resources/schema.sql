@@ -53,8 +53,8 @@ create table categories
         constraint PK__categori__3213E83F8BFF0AA4
             primary key,
     image_id    int,
-    is_expanded bit,
-    is_favorite bit,
+    is_expanded bit default 0,
+    is_favorite bit default 0,
     name        varchar(255),
     parent_id   bigint
         constraint FKsaok720gsu4u2wrgbk10b5n8d
@@ -98,7 +98,7 @@ create table notifications
     id          bigint identity
         constraint PK__notifica__3213E83FD40F7D52
             primary key,
-    is_read     bit,
+    is_read     bit default 0,
     message     varchar(255),
     sent_at     datetime2(6),
     receiver_id bigint
