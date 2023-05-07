@@ -4,13 +4,13 @@ import java.util.List;
 
 public interface CategoryService {
 
-    List<Category> getAllCategories();
+    List<CategoryDto> getAllCategories();
 
-    Category getCategoryById(Long id);
+    CategoryDto getCategoryById(Long id);
 
-    Category saveCategory(Category category);
+    CategoryDto saveCategory(CategoryDto categoryDto);
 
-    Category updateCategoryById(Category category, Long id);
+    CategoryDto updateCategoryById(CategoryDto categoryDto, Long id);
 
     void deleteCategoryById(Long id);
 }

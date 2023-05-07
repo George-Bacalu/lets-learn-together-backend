@@ -21,23 +21,23 @@ public class InstitutionController {
     private final InstitutionService institutionService;
 
     @GetMapping
-    public ResponseEntity<List<Institution>> getAllInstitutions() {
+    public ResponseEntity<List<InstitutionDto>> getAllInstitutions() {
         return ResponseEntity.ok(institutionService.getAllInstitutions());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Institution> getInstitutionById(@PathVariable Long id) {
+    public ResponseEntity<InstitutionDto> getInstitutionById(@PathVariable Long id) {
         return ResponseEntity.ok(institutionService.getInstitutionById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Institution> saveInstitution(@RequestBody Institution institution) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(institutionService.saveInstitution(institution));
+    public ResponseEntity<InstitutionDto> saveInstitution(@RequestBody InstitutionDto institutionDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(institutionService.saveInstitution(institutionDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Institution> updateInstitutionById(@RequestBody Institution institution, @PathVariable Long id) {
-        return ResponseEntity.ok(institutionService.updateInstitutionById(institution, id));
+    public ResponseEntity<InstitutionDto> updateInstitutionById(@RequestBody InstitutionDto institutionDto, @PathVariable Long id) {
+        return ResponseEntity.ok(institutionService.updateInstitutionById(institutionDto, id));
     }
 
     @DeleteMapping("/{id}")

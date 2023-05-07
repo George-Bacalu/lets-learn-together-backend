@@ -4,13 +4,13 @@ import java.util.List;
 
 public interface NotificationService {
 
-    List<Notification> getAllNotifications();
+    List<NotificationDto> getAllNotifications();
 
-    Notification getNotificationById(Long id);
+    NotificationDto getNotificationById(Long id);
 
-    Notification saveNotification(Notification notification);
+    NotificationDto saveNotification(NotificationDto notificationDto);
 
-    Notification updateNotificationById(Notification notification, Long id);
+    NotificationDto updateNotificationById(NotificationDto notificationDto, Long id);
 
     void deleteNotificationById(Long id);
 }

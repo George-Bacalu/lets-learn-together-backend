@@ -11,31 +11,60 @@ public class LetterSignPairServiceImpl implements LetterSignPairService {
     private final LetterSignPairDao letterSignPairDao;
 
     @Override
-    public List<LetterSignPair> getAllLetterSignPairs() {
-        return letterSignPairDao.findAll();
+    public List<LetterSignPairDto> getAllLetterSignPairs() {
+        List<LetterSignPair> letterSignPairs = letterSignPairDao.findAll();
+        return letterSignPairs.stream().map(letterSignPair -> LetterSignPairDto.builder()
+              .id(letterSignPair.getId())
+              .letter(letterSignPair.getLetter())
+              .imageId(letterSignPair.getImageId())
+              .build()).toList();
     }
 
     @Override
-    public LetterSignPair getLetterSignPairById(Long id) {
-        return letterSignPairDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Letter-sign pair with id %s was not found", id)));
+    public LetterSignPairDto getLetterSignPairById(Long id) {
+        LetterSignPair letterSignPair = getLetterSignPairEntityById(id);
+        return LetterSignPairDto.builder()
+              .id(letterSignPair.getId())
+              .letter(letterSignPair.getLetter())
+              .imageId(letterSignPair.getImageId())
+              .build();
     }
 
     @Override
-    public LetterSignPair saveLetterSignPair(LetterSignPair letterSignPair) {
-        return letterSignPairDao.save(letterSignPair);
+    public LetterSignPairDto saveLetterSignPair(LetterSignPairDto letterSignPairDto) {
+        LetterSignPair letterSignPair = LetterSignPair.builder()
+              .id(letterSignPairDto.getId())
+              .letter(letterSignPairDto.getLetter())
+              .imageId(letterSignPairDto.getImageId())
+              .build();
+        LetterSignPair savedLetterSignPair = letterSignPairDao.save(letterSignPair);
+        return LetterSignPairDto.builder()
+              .id(savedLetterSignPair.getId())
+              .letter(savedLetterSignPair.getLetter())
+              .imageId(savedLetterSignPair.getImageId())
+              .build();
     }
 
     @Override
-    public LetterSignPair updateLetterSignPairById(LetterSignPair letterSignPair, Long id) {
-        LetterSignPair letterSignPairToUpdate = getLetterSignPairById(id);
-        letterSignPairToUpdate.setLetter(letterSignPair.getLetter());
-        letterSignPairToUpdate.setImageId(letterSignPair.getImageId());
-        return letterSignPairDao.update(letterSignPairToUpdate);
+    public LetterSignPairDto updateLetterSignPairById(LetterSignPairDto letterSignPairDto, Long id) {
+        LetterSignPair letterSignPairToUpdate = getLetterSignPairEntityById(id);
+        letterSignPairToUpdate.setLetter(letterSignPairDto.getLetter());
+        letterSignPairToUpdate.setImageId(letterSignPairDto.getImageId());
+        LetterSignPair updatedLetterSignPair = letterSignPairDao.update(letterSignPairToUpdate);
+        return LetterSignPairDto.builder()
+              .id(updatedLetterSignPair.getId())
+              .letter(updatedLetterSignPair.getLetter())
+              .imageId(updatedLetterSignPair.getImageId())
+              .build();
     }
 
     @Override
     public void deleteLetterSignPairById(Long id) {
-        LetterSignPair letterSignPairToDelete = getLetterSignPairById(id);
+        LetterSignPair letterSignPairToDelete = getLetterSignPairEntityById(id);
         letterSignPairDao.delete(letterSignPairToDelete);
+    }
+
+    private LetterSignPair getLetterSignPairEntityById(Long id) {
+        return letterSignPairDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Letter-sign pair with id %s was not found", id)));
     }
 }

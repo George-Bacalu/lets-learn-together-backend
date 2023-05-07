@@ -1,6 +1,7 @@
 package com.project.llt.category;
 
 import com.project.llt.section.SectionDao;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,13 +50,14 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     @Transactional
     public Category save(Category category) {
-        Number generatedId = simpleJdbcInsert.executeAndReturnKey(Map.ofEntries(
-              Map.entry("name", category.getName()),
-              Map.entry("image_id", category.getImageId()),
-              Map.entry("is_expanded", category.getIsExpanded()),
-              Map.entry("is_favorite", category.getIsFavorite()),
-              Map.entry("parent_id", category.getParent() != null ? category.getParent().getId() : Optional.empty()),
-              Map.entry("section_id", category.getSection() != null ? category.getSection().getId() : Optional.empty())));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("name", category.getName());
+        parameters.put("image_id", category.getImageId());
+        parameters.put("is_expanded", category.getIsExpanded());
+        parameters.put("is_favorite", category.getIsFavorite());
+        if(category.getParent() != null) parameters.put("parent_id", category.getParent().getId());
+        if(category.getSection() != null) parameters.put("section_id", category.getSection().getId());
+        Number generatedId = simpleJdbcInsert.executeAndReturnKey(parameters);
         category.setId(generatedId.longValue());
         return category;
     }

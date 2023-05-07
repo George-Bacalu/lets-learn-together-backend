@@ -1,5 +1,6 @@
 package com.project.llt.institution;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,9 +43,10 @@ public class InstitutionDaoImpl implements InstitutionDao {
     @Override
     @Transactional
     public Institution save(Institution institution) {
-        Number generatedId = simpleJdbcInsert.executeAndReturnKey(Map.ofEntries(
-              Map.entry("school", institution.getSchool()),
-              Map.entry("classroom", institution.getClassroom())));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("school", institution.getSchool());
+        parameters.put("classroom", institution.getClassroom());
+        Number generatedId = simpleJdbcInsert.executeAndReturnKey(parameters);
         institution.setId(generatedId.longValue());
         return institution;
     }

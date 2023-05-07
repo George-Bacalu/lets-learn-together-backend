@@ -4,13 +4,13 @@ import java.util.List;
 
 public interface LetterSignPairService {
 
-    List<LetterSignPair> getAllLetterSignPairs();
+    List<LetterSignPairDto> getAllLetterSignPairs();
 
-    LetterSignPair getLetterSignPairById(Long id);
+    LetterSignPairDto getLetterSignPairById(Long id);
 
-    LetterSignPair saveLetterSignPair(LetterSignPair letterSignPair);
+    LetterSignPairDto saveLetterSignPair(LetterSignPairDto letterSignPairDto);
 
-    LetterSignPair updateLetterSignPairById(LetterSignPair letterSignPair, Long id);
+    LetterSignPairDto updateLetterSignPairById(LetterSignPairDto letterSignPairDto, Long id);
 
     void deleteLetterSignPairById(Long id);
 }

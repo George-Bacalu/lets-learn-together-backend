@@ -3,6 +3,7 @@ package com.project.llt.user;
 import com.project.llt.institution.InstitutionDao;
 import com.project.llt.role.RoleDao;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,15 +56,16 @@ public class UserDaoImpl implements UserDao {
     @Override
     @Transactional
     public User save(User user) {
-        Number generatedId = simpleJdbcInsert.executeAndReturnKey(Map.ofEntries(
-              Map.entry("name", user.getName()),
-              Map.entry("email", user.getEmail()),
-              Map.entry("password", user.getPassword()),
-              Map.entry("mobile", user.getMobile()),
-              Map.entry("address", user.getAddress()),
-              Map.entry("birthday", user.getBirthday()),
-              Map.entry("institution_id", user.getInstitution() != null ? user.getInstitution().getId() : Optional.empty()),
-              Map.entry("role_id", user.getRole() != null ? user.getRole().getId() : Optional.empty())));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("name", user.getName());
+        parameters.put("email", user.getEmail());
+        parameters.put("password", user.getPassword());
+        parameters.put("mobile", user.getMobile());
+        parameters.put("address", user.getAddress());
+        parameters.put("birthday", user.getBirthday());
+        if(user.getInstitution() != null) parameters.put("institution_id", user.getInstitution().getId());
+        if(user.getRole() != null) parameters.put("role_id", user.getRole().getId());
+        Number generatedId = simpleJdbcInsert.executeAndReturnKey(parameters);
         user.setId(generatedId.longValue());
         return user;
     }

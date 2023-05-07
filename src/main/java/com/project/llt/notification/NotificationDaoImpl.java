@@ -2,6 +2,7 @@ package com.project.llt.notification;
 
 import com.project.llt.user.UserDao;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,12 +50,13 @@ public class NotificationDaoImpl implements NotificationDao {
     @Override
     @Transactional
     public Notification save(Notification notification) {
-        Number generatedId = simpleJdbcInsert.executeAndReturnKey(Map.ofEntries(
-              Map.entry("message", notification.getMessage()),
-              Map.entry("is_read", notification.getIsRead()),
-              Map.entry("sent_at", notification.getSentAt()),
-              Map.entry("sender_id", notification.getSender() != null ? notification.getSender().getId() : Optional.empty()),
-              Map.entry("receiver_id", notification.getReceiver() != null ? notification.getReceiver().getId() : Optional.empty())));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("message", notification.getMessage());
+        parameters.put("is_read", notification.getIsRead());
+        parameters.put("sent_at", notification.getSentAt());
+        if(notification.getSender() != null) parameters.put("sender_id", notification.getSender().getId());
+        if(notification.getReceiver() != null) parameters.put("receiver_id", notification.getReceiver().getId());
+        Number generatedId = simpleJdbcInsert.executeAndReturnKey(parameters);
         notification.setId(generatedId.longValue());
         return notification;
     }

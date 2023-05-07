@@ -1,5 +1,6 @@
 package com.project.llt.section;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,10 +44,11 @@ public class SectionDaoImpl implements SectionDao {
     @Override
     @Transactional
     public Section save(Section section) {
-        Number generatedId = simpleJdbcInsert.executeAndReturnKey(Map.ofEntries(
-              Map.entry("name", section.getName()),
-              Map.entry("icon_id", section.getIconId()),
-              Map.entry("image_id", section.getImageId())));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("name", section.getName());
+        parameters.put("icon_id", section.getIconId());
+        parameters.put("image_id", section.getImageId());
+        Number generatedId = simpleJdbcInsert.executeAndReturnKey(parameters);
         section.setId(generatedId.longValue());
         return section;
     }

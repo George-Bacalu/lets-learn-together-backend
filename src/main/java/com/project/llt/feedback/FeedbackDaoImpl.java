@@ -1,8 +1,9 @@
 package com.project.llt.feedback;
 
-import com.project.llt.user.UserDao;
 import com.project.llt.feedback.enums.FeedbackType;
+import com.project.llt.user.UserDao;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,11 +50,12 @@ public class FeedbackDaoImpl implements FeedbackDao {
     @Override
     @Transactional
     public Feedback save(Feedback feedback) {
-        Number generatedId = simpleJdbcInsert.executeAndReturnKey(Map.ofEntries(
-              Map.entry("type", feedback.getType()),
-              Map.entry("description", feedback.getDescription()),
-              Map.entry("sent_at", feedback.getSentAt()),
-              Map.entry("user_id", feedback.getUser() != null ? feedback.getUser().getId() : Optional.empty())));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("type", feedback.getType());
+        parameters.put("description", feedback.getDescription());
+        parameters.put("sent_at", feedback.getSentAt());
+        if(feedback.getUser() != null) parameters.put("user_id", feedback.getUser().getId());
+        Number generatedId = simpleJdbcInsert.executeAndReturnKey(parameters);
         feedback.setId(generatedId.longValue());
         return feedback;
     }

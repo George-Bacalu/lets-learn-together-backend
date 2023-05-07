@@ -1,5 +1,6 @@
 package com.project.llt.letter_sign_pair;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,9 +43,10 @@ public class LetterSignPairDaoImpl implements LetterSignPairDao {
     @Override
     @Transactional
     public LetterSignPair save(LetterSignPair letterSignPair) {
-        Number generatedId = simpleJdbcInsert.executeAndReturnKey(Map.ofEntries(
-              Map.entry("letter", letterSignPair.getLetter()),
-              Map.entry("image_id", letterSignPair.getImageId())));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("letter", letterSignPair.getLetter());
+        parameters.put("image_id", letterSignPair.getImageId());
+        Number generatedId = simpleJdbcInsert.executeAndReturnKey(parameters);
         letterSignPair.setId(generatedId.longValue());
         return letterSignPair;
     }

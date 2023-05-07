@@ -21,23 +21,23 @@ public class LetterSignPairController {
     private final LetterSignPairService letterSignPairService;
 
     @GetMapping
-    public ResponseEntity<List<LetterSignPair>> getAllLetterSignPairs() {
+    public ResponseEntity<List<LetterSignPairDto>> getAllLetterSignPairs() {
         return ResponseEntity.ok(letterSignPairService.getAllLetterSignPairs());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LetterSignPair> getLetterSignPairById(@PathVariable Long id) {
+    public ResponseEntity<LetterSignPairDto> getLetterSignPairById(@PathVariable Long id) {
         return ResponseEntity.ok(letterSignPairService.getLetterSignPairById(id));
     }
 
     @PostMapping
-    public ResponseEntity<LetterSignPair> saveLetterSignPair(@RequestBody LetterSignPair letterSignPair) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(letterSignPairService.saveLetterSignPair(letterSignPair));
+    public ResponseEntity<LetterSignPairDto> saveLetterSignPair(@RequestBody LetterSignPairDto letterSignPairDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(letterSignPairService.saveLetterSignPair(letterSignPairDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LetterSignPair> updateLetterSignPairById(@RequestBody LetterSignPair letterSignPair, @PathVariable Long id) {
-        return ResponseEntity.ok(letterSignPairService.updateLetterSignPairById(letterSignPair, id));
+    public ResponseEntity<LetterSignPairDto> updateLetterSignPairById(@RequestBody LetterSignPairDto letterSignPairDto, @PathVariable Long id) {
+        return ResponseEntity.ok(letterSignPairService.updateLetterSignPairById(letterSignPairDto, id));
     }
 
     @DeleteMapping("/{id}")

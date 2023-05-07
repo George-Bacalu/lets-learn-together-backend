@@ -4,13 +4,15 @@ import java.util.List;
 
 public interface SectionService {
 
-    List<Section> getAllSections();
+    List<SectionDto> getAllSections();
 
-    Section getSectionById(Long id);
+    SectionDto getSectionById(Long id);
 
-    Section saveSection(Section section);
+    SectionDto saveSection(SectionDto sectionDto);
 
-    Section updateSectionById(Section section, Long id);
+    SectionDto updateSectionById(SectionDto sectionDto, Long id);
 
     void deleteSectionById(Long id);
+
+    Section getSectionEntityById(Long id);
 }

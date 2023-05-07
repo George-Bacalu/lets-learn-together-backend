@@ -4,13 +4,15 @@ import java.util.List;
 
 public interface InstitutionService {
 
-    List<Institution> getAllInstitutions();
+    List<InstitutionDto> getAllInstitutions();
 
-    Institution getInstitutionById(Long id);
+    InstitutionDto getInstitutionById(Long id);
 
-    Institution saveInstitution(Institution institution);
+    InstitutionDto saveInstitution(InstitutionDto institutionDto);
 
-    Institution updateInstitutionById(Institution institution, Long id);
+    InstitutionDto updateInstitutionById(InstitutionDto institutionDto, Long id);
 
     void deleteInstitutionById(Long id);
+
+    Institution getInstitutionEntityById(Long id);
 }

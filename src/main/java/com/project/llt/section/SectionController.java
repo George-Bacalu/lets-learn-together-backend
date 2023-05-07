@@ -21,23 +21,23 @@ public class SectionController {
     private final SectionService sectionService;
 
     @GetMapping
-    public ResponseEntity<List<Section>> getAllSections() {
+    public ResponseEntity<List<SectionDto>> getAllSections() {
         return ResponseEntity.ok(sectionService.getAllSections());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Section> getSectionById(@PathVariable Long id) {
+    public ResponseEntity<SectionDto> getSectionById(@PathVariable Long id) {
         return ResponseEntity.ok(sectionService.getSectionById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Section> saveSection(@RequestBody Section section) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(sectionService.saveSection(section));
+    public ResponseEntity<SectionDto> saveSection(@RequestBody SectionDto sectionDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(sectionService.saveSection(sectionDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Section> updateSectionById(@RequestBody Section section, @PathVariable Long id) {
-        return ResponseEntity.ok(sectionService.updateSectionById(section, id));
+    public ResponseEntity<SectionDto> updateSectionById(@RequestBody SectionDto sectionDto, @PathVariable Long id) {
+        return ResponseEntity.ok(sectionService.updateSectionById(sectionDto, id));
     }
 
     @DeleteMapping("/{id}")
