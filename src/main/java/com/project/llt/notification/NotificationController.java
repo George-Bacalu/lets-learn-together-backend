@@ -1,5 +1,6 @@
 package com.project.llt.notification;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,12 +32,12 @@ public class NotificationController {
     }
 
     @PostMapping
-    public ResponseEntity<NotificationDto> saveNotification(@RequestBody NotificationDto notificationDto) {
+    public ResponseEntity<NotificationDto> saveNotification(@RequestBody @Valid NotificationDto notificationDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(notificationService.saveNotification(notificationDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<NotificationDto> updateNotificationById(@RequestBody NotificationDto notificationDto, @PathVariable Long id) {
+    public ResponseEntity<NotificationDto> updateNotificationById(@RequestBody @Valid NotificationDto notificationDto, @PathVariable Long id) {
         return ResponseEntity.ok(notificationService.updateNotificationById(notificationDto, id));
     }
 

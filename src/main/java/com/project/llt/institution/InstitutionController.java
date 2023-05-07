@@ -1,5 +1,6 @@
 package com.project.llt.institution;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,12 +32,12 @@ public class InstitutionController {
     }
 
     @PostMapping
-    public ResponseEntity<InstitutionDto> saveInstitution(@RequestBody InstitutionDto institutionDto) {
+    public ResponseEntity<InstitutionDto> saveInstitution(@RequestBody @Valid InstitutionDto institutionDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(institutionService.saveInstitution(institutionDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<InstitutionDto> updateInstitutionById(@RequestBody InstitutionDto institutionDto, @PathVariable Long id) {
+    public ResponseEntity<InstitutionDto> updateInstitutionById(@RequestBody @Valid InstitutionDto institutionDto, @PathVariable Long id) {
         return ResponseEntity.ok(institutionService.updateInstitutionById(institutionDto, id));
     }
 

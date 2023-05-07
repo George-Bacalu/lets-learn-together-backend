@@ -1,5 +1,6 @@
 package com.project.llt.category;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,12 +32,12 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDto> saveCategory(@RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<CategoryDto> saveCategory(@RequestBody @Valid CategoryDto categoryDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.saveCategory(categoryDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDto> updateCategoryById(@RequestBody CategoryDto categoryDto, @PathVariable Long id) {
+    public ResponseEntity<CategoryDto> updateCategoryById(@RequestBody @Valid CategoryDto categoryDto, @PathVariable Long id) {
         return ResponseEntity.ok(categoryService.updateCategoryById(categoryDto, id));
     }
 

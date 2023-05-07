@@ -1,5 +1,6 @@
 package com.project.llt.section;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,12 +32,12 @@ public class SectionController {
     }
 
     @PostMapping
-    public ResponseEntity<SectionDto> saveSection(@RequestBody SectionDto sectionDto) {
+    public ResponseEntity<SectionDto> saveSection(@RequestBody @Valid SectionDto sectionDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(sectionService.saveSection(sectionDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SectionDto> updateSectionById(@RequestBody SectionDto sectionDto, @PathVariable Long id) {
+    public ResponseEntity<SectionDto> updateSectionById(@RequestBody @Valid SectionDto sectionDto, @PathVariable Long id) {
         return ResponseEntity.ok(sectionService.updateSectionById(sectionDto, id));
     }
 

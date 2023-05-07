@@ -1,5 +1,6 @@
 package com.project.llt.letter_sign_pair;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,12 +32,12 @@ public class LetterSignPairController {
     }
 
     @PostMapping
-    public ResponseEntity<LetterSignPairDto> saveLetterSignPair(@RequestBody LetterSignPairDto letterSignPairDto) {
+    public ResponseEntity<LetterSignPairDto> saveLetterSignPair(@RequestBody @Valid LetterSignPairDto letterSignPairDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(letterSignPairService.saveLetterSignPair(letterSignPairDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LetterSignPairDto> updateLetterSignPairById(@RequestBody LetterSignPairDto letterSignPairDto, @PathVariable Long id) {
+    public ResponseEntity<LetterSignPairDto> updateLetterSignPairById(@RequestBody @Valid LetterSignPairDto letterSignPairDto, @PathVariable Long id) {
         return ResponseEntity.ok(letterSignPairService.updateLetterSignPairById(letterSignPairDto, id));
     }
 
