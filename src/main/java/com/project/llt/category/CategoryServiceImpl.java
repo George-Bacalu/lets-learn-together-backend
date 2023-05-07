@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.mapper.CategoryMapper.convertToDto;
+import static com.project.llt.mapper.CategoryMapper.convertToEntity;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
@@ -18,20 +21,20 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> getAllCategories() {
         List<Category> categories = categoryDao.findAll();
-        return !categories.isEmpty() ? categories.stream().map(this::convertToDto).toList() : new ArrayList<>();
+        return !categories.isEmpty() ? categories.stream().map(category -> convertToDto(modelMapper, category)).toList() : new ArrayList<>();
     }
 
     @Override
     public CategoryDto getCategoryById(Long id) {
         Category category = getCategoryEntityById(id);
-        return convertToDto(category);
+        return convertToDto(modelMapper, category);
     }
 
     @Override
     public CategoryDto saveCategory(CategoryDto categoryDto) {
-        Category category = convertToEntity(categoryDto);
+        Category category = convertToEntity(modelMapper, categoryDto, categoryDao);
         Category savedCategory = categoryDao.save(category);
-        return convertToDto(savedCategory);
+        return convertToDto(modelMapper, savedCategory);
     }
 
     @Override
@@ -44,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
         categoryToUpdate.setParent(getCategoryEntityById(categoryDto.getParentId()));
         categoryToUpdate.setSection(sectionService.getSectionEntityById(categoryDto.getSectionId()));
         Category updatedCategory = categoryDao.update(categoryToUpdate);
-        return convertToDto(updatedCategory);
+        return convertToDto(modelMapper, updatedCategory);
     }
 
     @Override
@@ -55,15 +58,5 @@ public class CategoryServiceImpl implements CategoryService {
 
     private Category getCategoryEntityById(Long id) {
         return categoryDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Category with id %s was not found", id)));
-    }
-
-    private CategoryDto convertToDto(Category category) {
-        return modelMapper.map(category, CategoryDto.class);
-    }
-
-    private Category convertToEntity(CategoryDto categoryDto) {
-        Category category = modelMapper.map(categoryDto, Category.class);
-        category.setParent(getCategoryEntityById(categoryDto.getParentId()));
-        return category;
     }
 }

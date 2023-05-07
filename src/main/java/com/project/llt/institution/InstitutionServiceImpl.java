@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.mapper.InstitutionMapper.convertToDto;
+import static com.project.llt.mapper.InstitutionMapper.convertToEntity;
+
 @Service
 @RequiredArgsConstructor
 public class InstitutionServiceImpl implements InstitutionService {
@@ -16,20 +19,20 @@ public class InstitutionServiceImpl implements InstitutionService {
     @Override
     public List<InstitutionDto> getAllInstitutions() {
         List<Institution> institutions = institutionDao.findAll();
-        return !institutions.isEmpty() ? institutions.stream().map(this::convertToDto).toList() : new ArrayList<>();
+        return !institutions.isEmpty() ? institutions.stream().map(institution -> convertToDto(modelMapper, institution)).toList() : new ArrayList<>();
     }
 
     @Override
     public InstitutionDto getInstitutionById(Long id) {
         Institution institution = getInstitutionEntityById(id);
-        return convertToDto(institution);
+        return convertToDto(modelMapper, institution);
     }
 
     @Override
     public InstitutionDto saveInstitution(InstitutionDto institutionDto) {
-        Institution institution = convertToEntity(institutionDto);
+        Institution institution = convertToEntity(modelMapper, institutionDto);
         Institution savedInstitution = institutionDao.save(institution);
-        return convertToDto(savedInstitution);
+        return convertToDto(modelMapper, savedInstitution);
     }
 
     @Override
@@ -38,7 +41,7 @@ public class InstitutionServiceImpl implements InstitutionService {
         institutionToUpdate.setSchool(institutionDto.getSchool());
         institutionToUpdate.setClassroom(institutionDto.getClassroom());
         Institution updatedInstitution = institutionDao.update(institutionToUpdate);
-        return convertToDto(updatedInstitution);
+        return convertToDto(modelMapper, updatedInstitution);
     }
 
     @Override
@@ -50,13 +53,5 @@ public class InstitutionServiceImpl implements InstitutionService {
     @Override
     public Institution getInstitutionEntityById(Long id) {
         return institutionDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Institution with id %s was not found", id)));
-    }
-
-    private InstitutionDto convertToDto(Institution institution) {
-        return modelMapper.map(institution, InstitutionDto.class);
-    }
-
-    private Institution convertToEntity(InstitutionDto institutionDto) {
-        return modelMapper.map(institutionDto, Institution.class);
     }
 }

@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.mapper.FeedbackMapper.convertToDto;
+import static com.project.llt.mapper.FeedbackMapper.convertToEntity;
+
 @Service
 @RequiredArgsConstructor
 public class FeedbackServiceImpl implements FeedbackService {
@@ -19,21 +22,21 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public List<FeedbackDto> getAllFeedbacks() {
         List<Feedback> feedbacks = feedbackDao.findAll();
-        return !feedbacks.isEmpty() ? feedbacks.stream().map(this::convertToDto).toList() : new ArrayList<>();
+        return !feedbacks.isEmpty() ? feedbacks.stream().map(feedback -> convertToDto(modelMapper, feedback)).toList() : new ArrayList<>();
     }
 
     @Override
     public FeedbackDto getFeedbackById(Long id) {
         Feedback feedback = getFeedbackEntityById(id);
-        return convertToDto(feedback);
+        return convertToDto(modelMapper, feedback);
     }
 
     @Override
     public FeedbackDto saveFeedback(FeedbackDto feedbackDto) {
-        Feedback feedback = convertToEntity(feedbackDto);
+        Feedback feedback = convertToEntity(modelMapper, feedbackDto);
         feedback.setSentAt(LocalDateTime.now());
         Feedback savedFeedback = feedbackDao.save(feedback);
-        return convertToDto(savedFeedback);
+        return convertToDto(modelMapper, savedFeedback);
     }
 
     @Override
@@ -44,7 +47,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedbackToUpdate.setSentAt(feedbackDto.getSentAt());
         feedbackToUpdate.setUser(userService.getUserEntityById(feedbackDto.getUserId()));
         Feedback updatedFeedback = feedbackDao.update(feedbackToUpdate);
-        return convertToDto(updatedFeedback);
+        return convertToDto(modelMapper, updatedFeedback);
     }
 
     @Override
@@ -55,13 +58,5 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     private Feedback getFeedbackEntityById(Long id) {
         return feedbackDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Feedback with id %s was not found", id)));
-    }
-
-    private FeedbackDto convertToDto(Feedback feedback) {
-        return modelMapper.map(feedback, FeedbackDto.class);
-    }
-
-    private Feedback convertToEntity(FeedbackDto feedbackDto) {
-        return modelMapper.map(feedbackDto, Feedback.class);
     }
 }

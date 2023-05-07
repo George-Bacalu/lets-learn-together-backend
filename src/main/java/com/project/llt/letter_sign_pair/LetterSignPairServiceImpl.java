@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.mapper.LetterSignPairMapper.convertToDto;
+import static com.project.llt.mapper.LetterSignPairMapper.convertToEntity;
+
 @Service
 @RequiredArgsConstructor
 public class LetterSignPairServiceImpl implements LetterSignPairService {
@@ -16,20 +19,20 @@ public class LetterSignPairServiceImpl implements LetterSignPairService {
     @Override
     public List<LetterSignPairDto> getAllLetterSignPairs() {
         List<LetterSignPair> letterSignPairs = letterSignPairDao.findAll();
-        return !letterSignPairs.isEmpty() ? letterSignPairs.stream().map(this::convertToDto).toList() : new ArrayList<>();
+        return !letterSignPairs.isEmpty() ? letterSignPairs.stream().map(letterSignPair -> convertToDto(modelMapper, letterSignPair)).toList() : new ArrayList<>();
     }
 
     @Override
     public LetterSignPairDto getLetterSignPairById(Long id) {
         LetterSignPair letterSignPair = getLetterSignPairEntityById(id);
-        return convertToDto(letterSignPair);
+        return convertToDto(modelMapper, letterSignPair);
     }
 
     @Override
     public LetterSignPairDto saveLetterSignPair(LetterSignPairDto letterSignPairDto) {
-        LetterSignPair letterSignPair = convertToEntity(letterSignPairDto);
+        LetterSignPair letterSignPair = convertToEntity(modelMapper, letterSignPairDto);
         LetterSignPair savedLetterSignPair = letterSignPairDao.save(letterSignPair);
-        return convertToDto(savedLetterSignPair);
+        return convertToDto(modelMapper, savedLetterSignPair);
     }
 
     @Override
@@ -38,7 +41,7 @@ public class LetterSignPairServiceImpl implements LetterSignPairService {
         letterSignPairToUpdate.setLetter(letterSignPairDto.getLetter());
         letterSignPairToUpdate.setImageId(letterSignPairDto.getImageId());
         LetterSignPair updatedLetterSignPair = letterSignPairDao.update(letterSignPairToUpdate);
-        return convertToDto(updatedLetterSignPair);
+        return convertToDto(modelMapper, updatedLetterSignPair);
     }
 
     @Override
@@ -49,13 +52,5 @@ public class LetterSignPairServiceImpl implements LetterSignPairService {
 
     private LetterSignPair getLetterSignPairEntityById(Long id) {
         return letterSignPairDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Letter-sign pair with id %s was not found", id)));
-    }
-
-    private LetterSignPairDto convertToDto(LetterSignPair letterSignPair) {
-        return modelMapper.map(letterSignPair, LetterSignPairDto.class);
-    }
-
-    private LetterSignPair convertToEntity(LetterSignPairDto letterSignPairDto) {
-        return modelMapper.map(letterSignPairDto, LetterSignPair.class);
     }
 }

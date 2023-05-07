@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.mapper.NotificationMapper.convertToDto;
+import static com.project.llt.mapper.NotificationMapper.convertToEntity;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
@@ -19,21 +22,21 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<NotificationDto> getAllNotifications() {
         List<Notification> notifications = notificationDao.findAll();
-        return !notifications.isEmpty() ? notifications.stream().map(this::convertToDto).toList() : new ArrayList<>();
+        return !notifications.isEmpty() ? notifications.stream().map(notification -> convertToDto(modelMapper, notification)).toList() : new ArrayList<>();
     }
 
     @Override
     public NotificationDto getNotificationById(Long id) {
         Notification notification = getNotificationEntityById(id);
-        return convertToDto(notification);
+        return convertToDto(modelMapper, notification);
     }
 
     @Override
     public NotificationDto saveNotification(NotificationDto notificationDto) {
-        Notification notification = convertToEntity(notificationDto);
+        Notification notification = convertToEntity(modelMapper, notificationDto);
         notification.setSentAt(LocalDateTime.now());
         Notification savedNotification = notificationDao.save(notification);
-        return convertToDto(savedNotification);
+        return convertToDto(modelMapper, savedNotification);
     }
 
     @Override
@@ -45,7 +48,8 @@ public class NotificationServiceImpl implements NotificationService {
         notificationToUpdate.setSender(userService.getUserEntityById(notificationDto.getSenderId()));
         notificationToUpdate.setReceiver(userService.getUserEntityById(notificationDto.getReceiverId()));
         Notification updatedNotification = notificationDao.update(notificationToUpdate);
-        return convertToDto(updatedNotification);
+        updatedNotification.setSentAt(LocalDateTime.now());
+        return convertToDto(modelMapper, updatedNotification);
     }
 
     @Override
@@ -56,13 +60,5 @@ public class NotificationServiceImpl implements NotificationService {
 
     private Notification getNotificationEntityById(Long id) {
         return notificationDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Notification with id %s was not found", id)));
-    }
-
-    private NotificationDto convertToDto(Notification notification) {
-        return modelMapper.map(notification, NotificationDto.class);
-    }
-
-    private Notification convertToEntity(NotificationDto notificationDto) {
-        return modelMapper.map(notificationDto, Notification.class);
     }
 }

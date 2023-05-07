@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.mapper.UserMapper.convertToDto;
+import static com.project.llt.mapper.UserMapper.convertToEntity;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -20,20 +23,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllUsers() {
         List<User> users = userDao.findAll();
-        return !users.isEmpty() ? users.stream().map(this::convertToDto).toList() : new ArrayList<>();
+        return !users.isEmpty() ? users.stream().map(user -> convertToDto(modelMapper, user)).toList() : new ArrayList<>();
     }
 
     @Override
     public UserDto getUserById(Long id) {
         User user = getUserEntityById(id);
-        return convertToDto(user);
+        return convertToDto(modelMapper, user);
     }
 
     @Override
     public UserDto saveUser(UserDto userDto) {
-        User user = convertToEntity(userDto);
+        User user = convertToEntity(modelMapper, userDto);
         User savedUser = userDao.save(user);
-        return convertToDto(savedUser);
+        return convertToDto(modelMapper, savedUser);
     }
 
     @Override
@@ -48,7 +51,7 @@ public class UserServiceImpl implements UserService {
         userToUpdate.setInstitution(institutionService.getInstitutionEntityById(userDto.getInstitutionId()));
         userToUpdate.setRole(roleService.getRoleEntityById(userDto.getRoleId()));
         User updatedUser = userDao.update(userToUpdate);
-        return convertToDto(updatedUser);
+        return convertToDto(modelMapper, updatedUser);
     }
 
     @Override
@@ -60,13 +63,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserEntityById(Long id) {
         return userDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("User with id %s was not found", id)));
-    }
-
-    private UserDto convertToDto(User user) {
-        return modelMapper.map(user, UserDto.class);
-    }
-
-    private User convertToEntity(UserDto userDto) {
-        return modelMapper.map(userDto, User.class);
     }
 }
