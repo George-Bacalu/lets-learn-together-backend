@@ -1,7 +1,9 @@
 package com.project.llt.role;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -9,36 +11,25 @@ import org.springframework.stereotype.Service;
 public class RoleServiceImpl implements RoleService {
 
     private final RoleDao roleDao;
+    private final ModelMapper modelMapper;
 
     @Override
     public List<RoleDto> getAllRoles() {
         List<Role> roles = roleDao.findAll();
-        return roles.stream().map(role -> RoleDto.builder()
-              .id(role.getId())
-              .authority(role.getAuthority())
-              .build()).toList();
+        return !roles.isEmpty() ? roles.stream().map(this::convertToDto).toList() : new ArrayList<>();
     }
 
     @Override
     public RoleDto getRoleById(Long id) {
         Role role = getRoleEntityById(id);
-        return RoleDto.builder()
-              .id(role.getId())
-              .authority(role.getAuthority())
-              .build();
+        return convertToDto(role);
     }
 
     @Override
     public RoleDto saveRole(RoleDto roleDto) {
-        Role role = Role.builder()
-              .id(roleDto.getId())
-              .authority(roleDto.getAuthority())
-              .build();
+        Role role = convertToEntity(roleDto);
         Role savedRole = roleDao.save(role);
-        return RoleDto.builder()
-              .id(savedRole.getId())
-              .authority(savedRole.getAuthority())
-              .build();
+        return convertToDto(savedRole);
     }
 
     @Override
@@ -46,10 +37,7 @@ public class RoleServiceImpl implements RoleService {
         Role roleToUpdate = getRoleEntityById(id);
         roleToUpdate.setAuthority(roleDto.getAuthority());
         Role updatedRole = roleDao.update(roleToUpdate);
-        return RoleDto.builder()
-              .id(updatedRole.getId())
-              .authority(updatedRole.getAuthority())
-              .build();
+        return convertToDto(updatedRole);
     }
 
     @Override
@@ -61,5 +49,13 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role getRoleEntityById(Long id) {
         return roleDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Role with id %s was not found", id)));
+    }
+
+    private RoleDto convertToDto(Role role) {
+        return modelMapper.map(role, RoleDto.class);
+    }
+
+    private Role convertToEntity(RoleDto roleDto) {
+        return modelMapper.map(roleDto, Role.class);
     }
 }

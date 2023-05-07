@@ -1,8 +1,10 @@
 package com.project.llt.category;
 
 import com.project.llt.section.SectionService;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,56 +13,25 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryDao categoryDao;
     private final SectionService sectionService;
+    private final ModelMapper modelMapper;
 
     @Override
     public List<CategoryDto> getAllCategories() {
         List<Category> categories = categoryDao.findAll();
-        return categories.stream().map(category -> CategoryDto.builder()
-              .id(category.getId())
-              .name(category.getName())
-              .imageId(category.getImageId())
-              .isExpanded(category.getIsExpanded())
-              .isFavorite(category.getIsFavorite())
-              .parentId(category.getParent().getId())
-              .sectionId(category.getSection().getId())
-              .build()).toList();
+        return !categories.isEmpty() ? categories.stream().map(this::convertToDto).toList() : new ArrayList<>();
     }
 
     @Override
     public CategoryDto getCategoryById(Long id) {
         Category category = getCategoryEntityById(id);
-        return CategoryDto.builder()
-              .id(category.getId())
-              .name(category.getName())
-              .imageId(category.getImageId())
-              .isExpanded(category.getIsExpanded())
-              .isFavorite(category.getIsFavorite())
-              .parentId(category.getParent().getId())
-              .sectionId(category.getSection().getId())
-              .build();
+        return convertToDto(category);
     }
 
     @Override
     public CategoryDto saveCategory(CategoryDto categoryDto) {
-        Category category = Category.builder()
-              .id(categoryDto.getId())
-              .name(categoryDto.getName())
-              .imageId(categoryDto.getImageId())
-              .isExpanded(categoryDto.getIsExpanded())
-              .isFavorite(categoryDto.getIsFavorite())
-              .parent(categoryDao.findById(categoryDto.getParentId()).orElse(null))
-              .section(sectionService.getSectionEntityById(categoryDto.getSectionId()))
-              .build();
+        Category category = convertToEntity(categoryDto);
         Category savedCategory = categoryDao.save(category);
-        return CategoryDto.builder()
-              .id(savedCategory.getId())
-              .name(savedCategory.getName())
-              .imageId(savedCategory.getImageId())
-              .isExpanded(savedCategory.getIsExpanded())
-              .isFavorite(savedCategory.getIsFavorite())
-              .parentId(savedCategory.getParent() != null ? savedCategory.getParent().getId() : null)
-              .sectionId(savedCategory.getSection().getId())
-              .build();
+        return convertToDto(savedCategory);
     }
 
     @Override
@@ -70,18 +41,10 @@ public class CategoryServiceImpl implements CategoryService {
         categoryToUpdate.setImageId(categoryDto.getImageId());
         categoryToUpdate.setIsExpanded(categoryDto.getIsExpanded());
         categoryToUpdate.setIsFavorite(categoryDto.getIsFavorite());
-        categoryToUpdate.setParent(categoryDao.findById(categoryDto.getParentId()).orElse(null));
+        categoryToUpdate.setParent(getCategoryEntityById(categoryDto.getParentId()));
         categoryToUpdate.setSection(sectionService.getSectionEntityById(categoryDto.getSectionId()));
         Category updatedCategory = categoryDao.update(categoryToUpdate);
-        return CategoryDto.builder()
-              .id(updatedCategory.getId())
-              .name(updatedCategory.getName())
-              .imageId(updatedCategory.getImageId())
-              .isExpanded(updatedCategory.getIsExpanded())
-              .isFavorite(updatedCategory.getIsFavorite())
-              .parentId(updatedCategory.getParent().getId())
-              .sectionId(updatedCategory.getSection().getId())
-              .build();
+        return convertToDto(updatedCategory);
     }
 
     @Override
@@ -92,5 +55,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     private Category getCategoryEntityById(Long id) {
         return categoryDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Category with id %s was not found", id)));
+    }
+
+    private CategoryDto convertToDto(Category category) {
+        return modelMapper.map(category, CategoryDto.class);
+    }
+
+    private Category convertToEntity(CategoryDto categoryDto) {
+        Category category = modelMapper.map(categoryDto, Category.class);
+        category.setParent(getCategoryEntityById(categoryDto.getParentId()));
+        return category;
     }
 }

@@ -1,7 +1,9 @@
 package com.project.llt.section;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -9,44 +11,25 @@ import org.springframework.stereotype.Service;
 public class SectionServiceImpl implements SectionService {
 
     private final SectionDao sectionDao;
+    private final ModelMapper modelMapper;
 
     @Override
     public List<SectionDto> getAllSections() {
         List<Section> sections = sectionDao.findAll();
-        return sections.stream().map(section -> SectionDto.builder()
-              .id(section.getId())
-              .name(section.getName())
-              .iconId(section.getIconId())
-              .imageId(section.getImageId())
-              .build()).toList();
+        return !sections.isEmpty() ?  sections.stream().map(this::convertToDto).toList() : new ArrayList<>();
     }
 
     @Override
     public SectionDto getSectionById(Long id) {
         Section section = getSectionEntityById(id);
-        return SectionDto.builder()
-              .id(section.getId())
-              .name(section.getName())
-              .iconId(section.getIconId())
-              .imageId(section.getImageId())
-              .build();
+        return convertToDto(section);
     }
 
     @Override
     public SectionDto saveSection(SectionDto sectionDto) {
-        Section section = Section.builder()
-              .id(sectionDto.getId())
-              .name(sectionDto.getName())
-              .iconId(sectionDto.getIconId())
-              .imageId(sectionDto.getImageId())
-              .build();
+        Section section = convertToEntity(sectionDto);
         Section savedSection = sectionDao.save(section);
-        return SectionDto.builder()
-              .id(savedSection.getId())
-              .name(savedSection.getName())
-              .iconId(savedSection.getIconId())
-              .imageId(savedSection.getImageId())
-              .build();
+        return convertToDto(savedSection);
     }
 
     @Override
@@ -56,12 +39,7 @@ public class SectionServiceImpl implements SectionService {
         sectionToUpdate.setIconId(sectionDto.getIconId());
         sectionToUpdate.setImageId(sectionDto.getImageId());
         Section updatedSection = sectionDao.update(sectionToUpdate);
-        return SectionDto.builder()
-              .id(updatedSection.getId())
-              .name(updatedSection.getName())
-              .iconId(updatedSection.getIconId())
-              .imageId(updatedSection.getImageId())
-              .build();
+        return convertToDto(updatedSection);
     }
 
     @Override
@@ -73,5 +51,13 @@ public class SectionServiceImpl implements SectionService {
     @Override
     public Section getSectionEntityById(Long id) {
         return sectionDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Section with id %s was not found", id)));
+    }
+
+    private SectionDto convertToDto(Section section) {
+        return modelMapper.map(section, SectionDto.class);
+    }
+
+    private Section convertToEntity(SectionDto sectionDto) {
+        return modelMapper.map(sectionDto, Section.class);
     }
 }

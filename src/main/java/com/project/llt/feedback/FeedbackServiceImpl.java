@@ -1,8 +1,11 @@
 package com.project.llt.feedback;
 
 import com.project.llt.user.UserService;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,48 +14,26 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     private final FeedbackDao feedbackDao;
     private final UserService userService;
+    private final ModelMapper modelMapper;
 
     @Override
     public List<FeedbackDto> getAllFeedbacks() {
         List<Feedback> feedbacks = feedbackDao.findAll();
-        return feedbacks.stream().map(feedback -> FeedbackDto.builder()
-              .id(feedback.getId())
-              .type(feedback.getType())
-              .description(feedback.getDescription())
-              .sentAt(feedback.getSentAt())
-              .userId(feedback.getUser().getId())
-              .build()).toList();
+        return !feedbacks.isEmpty() ? feedbacks.stream().map(this::convertToDto).toList() : new ArrayList<>();
     }
 
     @Override
     public FeedbackDto getFeedbackById(Long id) {
         Feedback feedback = getFeedbackEntityById(id);
-        return FeedbackDto.builder()
-              .id(feedback.getId())
-              .type(feedback.getType())
-              .description(feedback.getDescription())
-              .sentAt(feedback.getSentAt())
-              .userId(feedback.getUser().getId())
-              .build();
+        return convertToDto(feedback);
     }
 
     @Override
     public FeedbackDto saveFeedback(FeedbackDto feedbackDto) {
-        Feedback feedback = Feedback.builder()
-              .id(feedbackDto.getId())
-              .type(feedbackDto.getType())
-              .description(feedbackDto.getDescription())
-              .sentAt(feedbackDto.getSentAt())
-              .user(userService.getUserEntityById(feedbackDto.getUserId()))
-              .build();
+        Feedback feedback = convertToEntity(feedbackDto);
+        feedback.setSentAt(LocalDateTime.now());
         Feedback savedFeedback = feedbackDao.save(feedback);
-        return FeedbackDto.builder()
-              .id(savedFeedback.getId())
-              .type(savedFeedback.getType())
-              .description(savedFeedback.getDescription())
-              .sentAt(savedFeedback.getSentAt())
-              .userId(savedFeedback.getUser().getId())
-              .build();
+        return convertToDto(savedFeedback);
     }
 
     @Override
@@ -63,13 +44,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedbackToUpdate.setSentAt(feedbackDto.getSentAt());
         feedbackToUpdate.setUser(userService.getUserEntityById(feedbackDto.getUserId()));
         Feedback updatedFeedback = feedbackDao.update(feedbackToUpdate);
-        return FeedbackDto.builder()
-              .id(updatedFeedback.getId())
-              .type(updatedFeedback.getType())
-              .description(updatedFeedback.getDescription())
-              .sentAt(updatedFeedback.getSentAt())
-              .userId(updatedFeedback.getUser().getId())
-              .build();
+        return convertToDto(updatedFeedback);
     }
 
     @Override
@@ -80,5 +55,13 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     private Feedback getFeedbackEntityById(Long id) {
         return feedbackDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Feedback with id %s was not found", id)));
+    }
+
+    private FeedbackDto convertToDto(Feedback feedback) {
+        return modelMapper.map(feedback, FeedbackDto.class);
+    }
+
+    private Feedback convertToEntity(FeedbackDto feedbackDto) {
+        return modelMapper.map(feedbackDto, Feedback.class);
     }
 }
