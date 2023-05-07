@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.constants.ExceptionMessageConstants.INSTITUTION_NOT_FOUND;
 import static com.project.llt.mapper.InstitutionMapper.convertToDto;
 import static com.project.llt.mapper.InstitutionMapper.convertToEntity;
 
@@ -52,6 +53,6 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     @Override
     public Institution getInstitutionEntityById(Long id) {
-        return institutionDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Institution with id %s was not found", id)));
+        return institutionDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(INSTITUTION_NOT_FOUND, id)));
     }
 }

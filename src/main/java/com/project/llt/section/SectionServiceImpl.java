@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.constants.ExceptionMessageConstants.SECTION_NOT_FOUND;
 import static com.project.llt.mapper.SectionMapper.convertToDto;
 import static com.project.llt.mapper.SectionMapper.convertToEntity;
 
@@ -53,6 +54,6 @@ public class SectionServiceImpl implements SectionService {
 
     @Override
     public Section getSectionEntityById(Long id) {
-        return sectionDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Section with id %s was not found", id)));
+        return sectionDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(SECTION_NOT_FOUND, id)));
     }
 }

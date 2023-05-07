@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.constants.ExceptionMessageConstants.FEEDBACK_NOT_FOUND;
 import static com.project.llt.mapper.FeedbackMapper.convertToDto;
 import static com.project.llt.mapper.FeedbackMapper.convertToEntity;
 
@@ -57,6 +58,6 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     private Feedback getFeedbackEntityById(Long id) {
-        return feedbackDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Feedback with id %s was not found", id)));
+        return feedbackDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(FEEDBACK_NOT_FOUND, id)));
     }
 }

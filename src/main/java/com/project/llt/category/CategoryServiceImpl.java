@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.constants.ExceptionMessageConstants.CATEGORY_NOT_FOUND;
 import static com.project.llt.mapper.CategoryMapper.convertToDto;
 import static com.project.llt.mapper.CategoryMapper.convertToEntity;
 
@@ -57,6 +58,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private Category getCategoryEntityById(Long id) {
-        return categoryDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Category with id %s was not found", id)));
+        return categoryDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(CATEGORY_NOT_FOUND, id)));
     }
 }

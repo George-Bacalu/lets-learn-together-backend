@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.constants.ExceptionMessageConstants.ROLE_NOT_FOUND;
 import static com.project.llt.mapper.RoleMapper.convertToDto;
 import static com.project.llt.mapper.RoleMapper.convertToEntity;
 
@@ -51,6 +52,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role getRoleEntityById(Long id) {
-        return roleDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Role with id %s was not found", id)));
+        return roleDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(ROLE_NOT_FOUND, id)));
     }
 }

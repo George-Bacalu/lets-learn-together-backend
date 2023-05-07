@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.constants.ExceptionMessageConstants.LETTER_SIGN_PAIR_NOT_FOUND;
 import static com.project.llt.mapper.LetterSignPairMapper.convertToDto;
 import static com.project.llt.mapper.LetterSignPairMapper.convertToEntity;
 
@@ -51,6 +52,6 @@ public class LetterSignPairServiceImpl implements LetterSignPairService {
     }
 
     private LetterSignPair getLetterSignPairEntityById(Long id) {
-        return letterSignPairDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Letter-sign pair with id %s was not found", id)));
+        return letterSignPairDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(LETTER_SIGN_PAIR_NOT_FOUND, id)));
     }
 }

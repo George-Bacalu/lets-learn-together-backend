@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.constants.ExceptionMessageConstants.USER_NOT_FOUND;
 import static com.project.llt.mapper.UserMapper.convertToDto;
 import static com.project.llt.mapper.UserMapper.convertToEntity;
 
@@ -62,6 +63,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserEntityById(Long id) {
-        return userDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("User with id %s was not found", id)));
+        return userDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(USER_NOT_FOUND, id)));
     }
 }

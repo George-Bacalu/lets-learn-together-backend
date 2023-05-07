@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import static com.project.llt.constants.ExceptionMessageConstants.NOTIFICATION_NOT_FOUND;
 import static com.project.llt.mapper.NotificationMapper.convertToDto;
 import static com.project.llt.mapper.NotificationMapper.convertToEntity;
 
@@ -59,6 +60,6 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private Notification getNotificationEntityById(Long id) {
-        return notificationDao.findById(id).orElseThrow(() -> new RuntimeException(String.format("Notification with id %s was not found", id)));
+        return notificationDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(NOTIFICATION_NOT_FOUND, id)));
     }
 }
