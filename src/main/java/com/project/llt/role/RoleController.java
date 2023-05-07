@@ -17,31 +17,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/roles")
-public class RoleController {
+public class RoleController implements RoleApi {
 
     private final RoleService roleService;
 
-    @GetMapping
+    @Override @GetMapping
     public ResponseEntity<List<RoleDto>> getAllRoles() {
         return ResponseEntity.ok(roleService.getAllRoles());
     }
 
-    @GetMapping("/{id}")
+    @Override @GetMapping("/{id}")
     public ResponseEntity<RoleDto> getRoleById(@PathVariable Long id) {
         return ResponseEntity.ok(roleService.getRoleById(id));
     }
 
-    @PostMapping
+    @Override @PostMapping
     public ResponseEntity<RoleDto> saveRole(@RequestBody @Valid RoleDto roleDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(roleService.saveRole(roleDto));
     }
 
-    @PutMapping("/{id}")
+    @Override @PutMapping("/{id}")
     public ResponseEntity<RoleDto> updateRoleById(@RequestBody @Valid RoleDto roleDto, @PathVariable Long id) {
         return ResponseEntity.ok(roleService.updateRoleById(roleDto, id));
     }
 
-    @DeleteMapping("/{id}")
+    @Override @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRoleById(@PathVariable Long id) {
         roleService.deleteRoleById(id);
         return ResponseEntity.noContent().build();

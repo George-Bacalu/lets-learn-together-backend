@@ -17,31 +17,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/letter-sign-pairs")
-public class LetterSignPairController {
+public class LetterSignPairController implements LetterSignPairApi {
 
     private final LetterSignPairService letterSignPairService;
 
-    @GetMapping
+    @Override @GetMapping
     public ResponseEntity<List<LetterSignPairDto>> getAllLetterSignPairs() {
         return ResponseEntity.ok(letterSignPairService.getAllLetterSignPairs());
     }
 
-    @GetMapping("/{id}")
+    @Override @GetMapping("/{id}")
     public ResponseEntity<LetterSignPairDto> getLetterSignPairById(@PathVariable Long id) {
         return ResponseEntity.ok(letterSignPairService.getLetterSignPairById(id));
     }
 
-    @PostMapping
+    @Override @PostMapping
     public ResponseEntity<LetterSignPairDto> saveLetterSignPair(@RequestBody @Valid LetterSignPairDto letterSignPairDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(letterSignPairService.saveLetterSignPair(letterSignPairDto));
     }
 
-    @PutMapping("/{id}")
+    @Override @PutMapping("/{id}")
     public ResponseEntity<LetterSignPairDto> updateLetterSignPairById(@RequestBody @Valid LetterSignPairDto letterSignPairDto, @PathVariable Long id) {
         return ResponseEntity.ok(letterSignPairService.updateLetterSignPairById(letterSignPairDto, id));
     }
 
-    @DeleteMapping("/{id}")
+    @Override @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLetterSignPairById(@PathVariable Long id) {
         letterSignPairService.deleteLetterSignPairById(id);
         return ResponseEntity.noContent().build();

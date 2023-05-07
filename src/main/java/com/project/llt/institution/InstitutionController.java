@@ -17,31 +17,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/institutions")
-public class InstitutionController {
+public class InstitutionController implements InstitutionApi {
 
     private final InstitutionService institutionService;
 
-    @GetMapping
+    @Override @GetMapping
     public ResponseEntity<List<InstitutionDto>> getAllInstitutions() {
         return ResponseEntity.ok(institutionService.getAllInstitutions());
     }
 
-    @GetMapping("/{id}")
+    @Override @GetMapping("/{id}")
     public ResponseEntity<InstitutionDto> getInstitutionById(@PathVariable Long id) {
         return ResponseEntity.ok(institutionService.getInstitutionById(id));
     }
 
-    @PostMapping
+    @Override @PostMapping
     public ResponseEntity<InstitutionDto> saveInstitution(@RequestBody @Valid InstitutionDto institutionDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(institutionService.saveInstitution(institutionDto));
     }
 
-    @PutMapping("/{id}")
+    @Override @PutMapping("/{id}")
     public ResponseEntity<InstitutionDto> updateInstitutionById(@RequestBody @Valid InstitutionDto institutionDto, @PathVariable Long id) {
         return ResponseEntity.ok(institutionService.updateInstitutionById(institutionDto, id));
     }
 
-    @DeleteMapping("/{id}")
+    @Override @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteInstitutionById(@PathVariable Long id) {
         institutionService.deleteInstitutionById(id);
         return ResponseEntity.noContent().build();

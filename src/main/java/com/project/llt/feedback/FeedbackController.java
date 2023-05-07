@@ -17,31 +17,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/feedbacks")
-public class FeedbackController {
+public class FeedbackController implements FeedbackApi {
 
     private final FeedbackService feedbackService;
 
-    @GetMapping
+    @Override @GetMapping
     public ResponseEntity<List<FeedbackDto>> getAllFeedbacks() {
         return ResponseEntity.ok(feedbackService.getAllFeedbacks());
     }
 
-    @GetMapping("/{id}")
+    @Override @GetMapping("/{id}")
     public ResponseEntity<FeedbackDto> getFeedbackById(@PathVariable Long id) {
         return ResponseEntity.ok(feedbackService.getFeedbackById(id));
     }
 
-    @PostMapping
+    @Override @PostMapping
     public ResponseEntity<FeedbackDto> saveFeedback(@RequestBody @Valid FeedbackDto feedbackDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(feedbackService.saveFeedback(feedbackDto));
     }
 
-    @PutMapping("/{id}")
+    @Override @PutMapping("/{id}")
     public ResponseEntity<FeedbackDto> updateFeedbackById(@RequestBody @Valid FeedbackDto feedbackDto, @PathVariable Long id) {
         return ResponseEntity.ok(feedbackService.updateFeedbackById(feedbackDto, id));
     }
 
-    @DeleteMapping("/{id}")
+    @Override @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFeedbackById(@PathVariable Long id) {
         feedbackService.deleteFeedbackById(id);
         return ResponseEntity.noContent().build();

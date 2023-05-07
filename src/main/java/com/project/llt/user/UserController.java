@@ -17,31 +17,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
-public class UserController {
+public class UserController implements UserApi {
 
     private final UserService userService;
 
-    @GetMapping
+    @Override @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/{id}")
+    @Override @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PostMapping
+    @Override @PostMapping
     public ResponseEntity<UserDto> saveUser(@RequestBody @Valid UserDto userDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(userDto));
     }
 
-    @PutMapping("/{id}")
+    @Override @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUserById(@RequestBody @Valid UserDto userDto, @PathVariable Long id) {
         return ResponseEntity.ok(userService.updateUserById(userDto, id));
     }
 
-    @DeleteMapping("/{id}")
+    @Override @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();

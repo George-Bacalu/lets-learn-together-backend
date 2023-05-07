@@ -17,31 +17,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/sections")
-public class SectionController {
+public class SectionController implements SectionApi {
 
     private final SectionService sectionService;
 
-    @GetMapping
+    @Override @GetMapping
     public ResponseEntity<List<SectionDto>> getAllSections() {
         return ResponseEntity.ok(sectionService.getAllSections());
     }
 
-    @GetMapping("/{id}")
+    @Override @GetMapping("/{id}")
     public ResponseEntity<SectionDto> getSectionById(@PathVariable Long id) {
         return ResponseEntity.ok(sectionService.getSectionById(id));
     }
 
-    @PostMapping
+    @Override @PostMapping
     public ResponseEntity<SectionDto> saveSection(@RequestBody @Valid SectionDto sectionDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(sectionService.saveSection(sectionDto));
     }
 
-    @PutMapping("/{id}")
+    @Override @PutMapping("/{id}")
     public ResponseEntity<SectionDto> updateSectionById(@RequestBody @Valid SectionDto sectionDto, @PathVariable Long id) {
         return ResponseEntity.ok(sectionService.updateSectionById(sectionDto, id));
     }
 
-    @DeleteMapping("/{id}")
+    @Override @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSectionById(@PathVariable Long id) {
         sectionService.deleteSectionById(id);
         return ResponseEntity.noContent().build();
