@@ -1,6 +1,8 @@
 package com.project.llt.feedback;
 
+import com.project.llt.exception.ResourceNotFoundException;
 import com.project.llt.user.UserService;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     private final FeedbackDao feedbackDao;
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final Clock clock;
 
     @Override
     public List<FeedbackDto> getAllFeedbacks() {
@@ -35,7 +38,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public FeedbackDto saveFeedback(FeedbackDto feedbackDto) {
         Feedback feedback = convertToEntity(modelMapper, feedbackDto);
-        feedback.setSentAt(LocalDateTime.now());
+        feedback.setSentAt(LocalDateTime.now(clock));
         Feedback savedFeedback = feedbackDao.save(feedback);
         return convertToDto(modelMapper, savedFeedback);
     }
@@ -45,7 +48,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         Feedback feedbackToUpdate = getFeedbackEntityById(id);
         feedbackToUpdate.setType(feedbackDto.getType());
         feedbackToUpdate.setDescription(feedbackDto.getDescription());
-        feedbackToUpdate.setSentAt(feedbackDto.getSentAt());
         feedbackToUpdate.setUser(userService.getUserEntityById(feedbackDto.getUserId()));
         Feedback updatedFeedback = feedbackDao.update(feedbackToUpdate);
         return convertToDto(modelMapper, updatedFeedback);
@@ -58,6 +60,6 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     private Feedback getFeedbackEntityById(Long id) {
-        return feedbackDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(FEEDBACK_NOT_FOUND, id)));
+        return feedbackDao.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(FEEDBACK_NOT_FOUND, id)));
     }
 }

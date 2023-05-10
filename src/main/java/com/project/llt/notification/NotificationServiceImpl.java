@@ -1,6 +1,8 @@
 package com.project.llt.notification;
 
+import com.project.llt.exception.ResourceNotFoundException;
 import com.project.llt.user.UserService;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationDao notificationDao;
     private final UserService userService;
     private final ModelMapper modelMapper;
+    private final Clock clock;
 
     @Override
     public List<NotificationDto> getAllNotifications() {
@@ -35,7 +38,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public NotificationDto saveNotification(NotificationDto notificationDto) {
         Notification notification = convertToEntity(modelMapper, notificationDto);
-        notification.setSentAt(LocalDateTime.now());
+        notification.setSentAt(LocalDateTime.now(clock));
         Notification savedNotification = notificationDao.save(notification);
         return convertToDto(modelMapper, savedNotification);
     }
@@ -45,11 +48,9 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notificationToUpdate = getNotificationEntityById(id);
         notificationToUpdate.setMessage(notificationDto.getMessage());
         notificationToUpdate.setIsRead(notificationDto.getIsRead());
-        notificationToUpdate.setSentAt(notificationDto.getSentAt());
         notificationToUpdate.setSender(userService.getUserEntityById(notificationDto.getSenderId()));
         notificationToUpdate.setReceiver(userService.getUserEntityById(notificationDto.getReceiverId()));
         Notification updatedNotification = notificationDao.update(notificationToUpdate);
-        updatedNotification.setSentAt(LocalDateTime.now());
         return convertToDto(modelMapper, updatedNotification);
     }
 
@@ -60,6 +61,6 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private Notification getNotificationEntityById(Long id) {
-        return notificationDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(NOTIFICATION_NOT_FOUND, id)));
+        return notificationDao.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(NOTIFICATION_NOT_FOUND, id)));
     }
 }

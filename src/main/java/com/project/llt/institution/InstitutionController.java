@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/institutions")
+@RequestMapping(value = "/api/institutions", produces = APPLICATION_JSON_VALUE)
 public class InstitutionController implements InstitutionApi {
 
     private final InstitutionService institutionService;
@@ -31,12 +33,12 @@ public class InstitutionController implements InstitutionApi {
         return ResponseEntity.ok(institutionService.getInstitutionById(id));
     }
 
-    @Override @PostMapping
+    @Override @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<InstitutionDto> saveInstitution(@RequestBody @Valid InstitutionDto institutionDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(institutionService.saveInstitution(institutionDto));
     }
 
-    @Override @PutMapping("/{id}")
+    @Override @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<InstitutionDto> updateInstitutionById(@RequestBody @Valid InstitutionDto institutionDto, @PathVariable Long id) {
         return ResponseEntity.ok(institutionService.updateInstitutionById(institutionDto, id));
     }

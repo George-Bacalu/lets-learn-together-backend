@@ -1,5 +1,6 @@
 package com.project.llt.category;
 
+import com.project.llt.exception.ResourceNotFoundException;
 import com.project.llt.section.SectionService;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private Category getCategoryEntityById(Long id) {
-        return categoryDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(CATEGORY_NOT_FOUND, id)));
+        return categoryDao.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(CATEGORY_NOT_FOUND, id)));
     }
 }

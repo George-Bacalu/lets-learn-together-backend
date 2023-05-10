@@ -1,5 +1,6 @@
 package com.project.llt.institution;
 
+import com.project.llt.exception.ResourceNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,6 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     @Override
     public Institution getInstitutionEntityById(Long id) {
-        return institutionDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(INSTITUTION_NOT_FOUND, id)));
+        return institutionDao.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(INSTITUTION_NOT_FOUND, id)));
     }
 }

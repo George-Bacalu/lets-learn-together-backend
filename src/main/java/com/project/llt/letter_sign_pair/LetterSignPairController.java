@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/letter-sign-pairs")
+@RequestMapping(value = "/api/letter-sign-pairs", produces = APPLICATION_JSON_VALUE)
 public class LetterSignPairController implements LetterSignPairApi {
 
     private final LetterSignPairService letterSignPairService;
@@ -31,12 +33,12 @@ public class LetterSignPairController implements LetterSignPairApi {
         return ResponseEntity.ok(letterSignPairService.getLetterSignPairById(id));
     }
 
-    @Override @PostMapping
+    @Override @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<LetterSignPairDto> saveLetterSignPair(@RequestBody @Valid LetterSignPairDto letterSignPairDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(letterSignPairService.saveLetterSignPair(letterSignPairDto));
     }
 
-    @Override @PutMapping("/{id}")
+    @Override @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<LetterSignPairDto> updateLetterSignPairById(@RequestBody @Valid LetterSignPairDto letterSignPairDto, @PathVariable Long id) {
         return ResponseEntity.ok(letterSignPairService.updateLetterSignPairById(letterSignPairDto, id));
     }

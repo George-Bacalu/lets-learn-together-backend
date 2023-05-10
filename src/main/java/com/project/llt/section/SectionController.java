@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/sections")
+@RequestMapping(value = "/api/sections", produces = APPLICATION_JSON_VALUE)
 public class SectionController implements SectionApi {
 
     private final SectionService sectionService;
@@ -31,12 +33,12 @@ public class SectionController implements SectionApi {
         return ResponseEntity.ok(sectionService.getSectionById(id));
     }
 
-    @Override @PostMapping
+    @Override @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<SectionDto> saveSection(@RequestBody @Valid SectionDto sectionDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(sectionService.saveSection(sectionDto));
     }
 
-    @Override @PutMapping("/{id}")
+    @Override @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<SectionDto> updateSectionById(@RequestBody @Valid SectionDto sectionDto, @PathVariable Long id) {
         return ResponseEntity.ok(sectionService.updateSectionById(sectionDto, id));
     }

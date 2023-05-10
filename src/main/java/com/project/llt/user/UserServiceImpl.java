@@ -1,5 +1,6 @@
 package com.project.llt.user;
 
+import com.project.llt.exception.ResourceNotFoundException;
 import com.project.llt.institution.InstitutionService;
 import com.project.llt.role.RoleService;
 import java.util.ArrayList;
@@ -63,6 +64,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserEntityById(Long id) {
-        return userDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(USER_NOT_FOUND, id)));
+        return userDao.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(USER_NOT_FOUND, id)));
     }
 }

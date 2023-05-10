@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/roles")
+@RequestMapping(value = "/api/roles", produces = APPLICATION_JSON_VALUE)
 public class RoleController implements RoleApi {
 
     private final RoleService roleService;
@@ -31,12 +33,12 @@ public class RoleController implements RoleApi {
         return ResponseEntity.ok(roleService.getRoleById(id));
     }
 
-    @Override @PostMapping
+    @Override @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<RoleDto> saveRole(@RequestBody @Valid RoleDto roleDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(roleService.saveRole(roleDto));
     }
 
-    @Override @PutMapping("/{id}")
+    @Override @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<RoleDto> updateRoleById(@RequestBody @Valid RoleDto roleDto, @PathVariable Long id) {
         return ResponseEntity.ok(roleService.updateRoleById(roleDto, id));
     }

@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/notifications")
+@RequestMapping(value = "/api/notifications", produces = APPLICATION_JSON_VALUE)
 public class NotificationController implements NotificationApi {
 
     private final NotificationService notificationService;
@@ -31,12 +33,12 @@ public class NotificationController implements NotificationApi {
         return ResponseEntity.ok(notificationService.getNotificationById(id));
     }
 
-    @Override @PostMapping
+    @Override @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<NotificationDto> saveNotification(@RequestBody @Valid NotificationDto notificationDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(notificationService.saveNotification(notificationDto));
     }
 
-    @Override @PutMapping("/{id}")
+    @Override @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<NotificationDto> updateNotificationById(@RequestBody @Valid NotificationDto notificationDto, @PathVariable Long id) {
         return ResponseEntity.ok(notificationService.updateNotificationById(notificationDto, id));
     }

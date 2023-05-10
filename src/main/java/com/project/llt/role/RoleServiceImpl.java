@@ -1,5 +1,6 @@
 package com.project.llt.role;
 
+import com.project.llt.exception.ResourceNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role getRoleEntityById(Long id) {
-        return roleDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(ROLE_NOT_FOUND, id)));
+        return roleDao.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(ROLE_NOT_FOUND, id)));
     }
 }

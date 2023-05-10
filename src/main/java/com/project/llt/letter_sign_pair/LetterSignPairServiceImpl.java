@@ -1,5 +1,6 @@
 package com.project.llt.letter_sign_pair;
 
+import com.project.llt.exception.ResourceNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,6 @@ public class LetterSignPairServiceImpl implements LetterSignPairService {
     }
 
     private LetterSignPair getLetterSignPairEntityById(Long id) {
-        return letterSignPairDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(LETTER_SIGN_PAIR_NOT_FOUND, id)));
+        return letterSignPairDao.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(LETTER_SIGN_PAIR_NOT_FOUND, id)));
     }
 }

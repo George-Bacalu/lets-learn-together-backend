@@ -1,5 +1,6 @@
 package com.project.llt.section;
 
+import com.project.llt.exception.ResourceNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,6 @@ public class SectionServiceImpl implements SectionService {
 
     @Override
     public Section getSectionEntityById(Long id) {
-        return sectionDao.findById(id).orElseThrow(() -> new RuntimeException(String.format(SECTION_NOT_FOUND, id)));
+        return sectionDao.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format(SECTION_NOT_FOUND, id)));
     }
 }
