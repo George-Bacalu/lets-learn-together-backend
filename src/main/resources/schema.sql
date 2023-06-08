@@ -1,110 +1,110 @@
-alter table categories drop constraint if exists FKsaok720gsu4u2wrgbk10b5n8d
-alter table categories drop constraint if exists FKi9smu6td2uq355od2mubpfb71
-alter table feedbacks drop constraint if exists FK312drfl5lquu37mu4trk8jkwx
-alter table notifications drop constraint if exists FK9kxl0whvhifo6gw4tjq36v53k
-alter table notifications drop constraint if exists FK13vcnq3ukas06ho1yrbc5lrb5
-alter table users drop constraint if exists FK2qqjpih9isqcs22710v8lef9w
-alter table users drop constraint if exists FKp56c1712k691lhsyewcssf40f
+ALTER TABLE categories DROP CONSTRAINT IF EXISTS FKsaok720gsu4u2wrgbk10b5n8d
+ALTER TABLE categories DROP CONSTRAINT IF EXISTS FKi9smu6td2uq355od2mubpfb71
+ALTER TABLE feedbacks DROP CONSTRAINT IF EXISTS FK312drfl5lquu37mu4trk8jkwx
+ALTER TABLE notifications DROP CONSTRAINT IF EXISTS FK9kxl0whvhifo6gw4tjq36v53k
+ALTER TABLE notifications DROP CONSTRAINT IF EXISTS FK13vcnq3ukas06ho1yrbc5lrb5
+ALTER TABLE users DROP CONSTRAINT IF EXISTS FK2qqjpih9isqcs22710v8lef9w
+ALTER TABLE users DROP CONSTRAINT IF EXISTS FKp56c1712k691lhsyewcssf40f
 
-drop table if exists categories
-drop table if exists feedbacks
-drop table if exists institutions
-drop table if exists letter_sign_pairs
-drop table if exists notifications
-drop table if exists roles
-drop table if exists sections
-drop table if exists users
+DROP TABLE IF EXISTS categories
+DROP TABLE IF EXISTS feedbacks
+DROP TABLE IF EXISTS institutions
+DROP TABLE IF EXISTS letter_sign_pairs
+DROP TABLE IF EXISTS notifications
+DROP TABLE IF EXISTS roles
+DROP TABLE IF EXISTS sections
+DROP TABLE IF EXISTS users
 
-create table institutions
+CREATE TABLE institutions
 (
-    id        bigint identity
-        constraint PK__institut__3213E83FAFE7AE5C
-            primary key,
-    classroom varchar(255),
-    school    varchar(255)
+    id        BIGINT IDENTITY
+        CONSTRAINT PK__institut__3213E83FAFE7AE5C
+        PRIMARY KEY,
+    classroom VARCHAR(255),
+    school    VARCHAR(255)
 );
-create table letter_sign_pairs
+CREATE TABLE letter_sign_pairs
 (
-    id       bigint identity
-        constraint PK__letter_s__3213E83FDFA55B3F
-            primary key,
-    image_id int,
-    letter   varchar(255)
+    id       BIGINT IDENTITY
+        CONSTRAINT PK__letter_s__3213E83FDFA55B3F
+        PRIMARY KEY,
+    image_id INT,
+    letter   VARCHAR(255)
 );
-create table roles
+CREATE TABLE roles
 (
-    id        bigint identity
-        constraint PK__roles__3213E83F6FAF4BC0
-            primary key,
-    authority varchar(255)
+    id        BIGINT IDENTITY
+        CONSTRAINT PK__roles__3213E83F6FAF4BC0
+        PRIMARY KEY,
+    authority VARCHAR(255)
 );
-create table sections
+CREATE TABLE sections
 (
-    id       bigint identity
-        constraint PK__sections__3213E83FEE7AEF07
-            primary key,
-    icon_id  int,
-    image_id int,
-    name     varchar(255)
+    id       BIGINT IDENTITY
+        CONSTRAINT PK__sections__3213E83FEE7AEF07
+        PRIMARY KEY,
+    icon_id  INT,
+    image_id INT,
+    name     VARCHAR(255)
 );
-create table categories
+CREATE TABLE categories
 (
-    id          bigint identity
-        constraint PK__categori__3213E83F8BFF0AA4
-            primary key,
-    image_id    int,
-    is_expanded bit default 0,
-    is_favorite bit default 0,
-    name        varchar(255),
-    parent_id   bigint
-        constraint FKsaok720gsu4u2wrgbk10b5n8d
-            references categories,
-    section_id  bigint
-        constraint FKi9smu6td2uq355od2mubpfb71
-            references sections
+    id          BIGINT IDENTITY
+        CONSTRAINT PK__categori__3213E83F8BFF0AA4
+        PRIMARY KEY,
+    image_id    INT,
+    is_expanded BIT DEFAULT 0,
+    is_favorite BIT DEFAULT 0,
+    name        VARCHAR(255),
+    parent_id   BIGINT
+        CONSTRAINT FKsaok720gsu4u2wrgbk10b5n8d
+            REFERENCES categories,
+    section_id  BIGINT
+        CONSTRAINT FKi9smu6td2uq355od2mubpfb71
+            REFERENCES sections
 );
-create table users
+CREATE TABLE users
 (
-    id             bigint identity
-        constraint PK__users__3213E83FE675B0EF
-            primary key,
-    address        varchar(255),
-    birthday       date,
-    email          varchar(255),
-    mobile         varchar(255),
-    name           varchar(255),
-    password       varchar(255),
-    institution_id bigint
-        constraint FK2qqjpih9isqcs22710v8lef9w
-            references institutions,
-    role_id        bigint
-        constraint FKp56c1712k691lhsyewcssf40f
-            references roles
+    id             BIGINT IDENTITY
+        CONSTRAINT PK__users__3213E83FE675B0EF
+        PRIMARY KEY,
+    address        VARCHAR(255),
+    birthday       DATE,
+    email          VARCHAR(255),
+    mobile         VARCHAR(255),
+    name           VARCHAR(255),
+    password       VARCHAR(255),
+    institution_id bigINT
+        CONSTRAINT FK2qqjpih9isqcs22710v8lef9w
+            REFERENCES institutions,
+    role_id        BIGINT
+        CONSTRAINT FKp56c1712k691lhsyewcssf40f
+            REFERENCES roles
 );
-create table feedbacks
+CREATE TABLE feedbacks
 (
-    id          bigint identity
-        constraint PK__feedback__3213E83F1ECC505A
-            primary key,
-    description varchar(255),
-    sent_at     datetime2(6),
-    type        varchar(255),
-    user_id     bigint
-        constraint FK312drfl5lquu37mu4trk8jkwx
-            references users
+    id          BIGINT IDENTITY
+        CONSTRAINT PK__feedback__3213E83F1ECC505A
+        PRIMARY KEY,
+    description VARCHAR(255),
+    sent_at     DATETIME2(6),
+    type        VARCHAR(255),
+    user_id     BIGINT
+        CONSTRAINT FK312drfl5lquu37mu4trk8jkwx
+            REFERENCES users
 );
-create table notifications
+CREATE TABLE notifications
 (
-    id          bigint identity
-        constraint PK__notifica__3213E83FD40F7D52
-            primary key,
-    is_read     bit default 0,
-    message     varchar(255),
-    sent_at     datetime2(6),
-    receiver_id bigint
-        constraint FK9kxl0whvhifo6gw4tjq36v53k
-            references users,
-    sender_id   bigint
-        constraint FK13vcnq3ukas06ho1yrbc5lrb5
-            references users
+    id          BIGINT IDENTITY
+        CONSTRAINT PK__notifica__3213E83FD40F7D52
+        PRIMARY KEY,
+    is_read     BIT DEFAULT 0,
+    message     VARCHAR(255),
+    sent_at     DATEtime2(6),
+    receiver_id BIGINT
+        CONSTRAINT FK9kxl0whvhifo6gw4tjq36v53k
+            REFERENCES users,
+    sender_id   BIGINT
+        CONSTRAINT FK13vcnq3ukas06ho1yrbc5lrb5
+            REFERENCES users
 );

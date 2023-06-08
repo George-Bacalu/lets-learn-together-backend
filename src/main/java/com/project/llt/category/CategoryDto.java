@@ -24,9 +24,11 @@ public class CategoryDto {
     private Integer imageId;
 
     @Builder.Default
+    @NotNull(message = "IsExpanded must not be null")
     private Boolean isExpanded = false;
 
     @Builder.Default
+    @NotNull(message = "IsFavorite must not be null")
     private Boolean isFavorite = false;
 
     private Long parentId;

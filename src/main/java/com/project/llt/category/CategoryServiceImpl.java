@@ -2,7 +2,6 @@ package com.project.llt.category;
 
 import com.project.llt.exception.ResourceNotFoundException;
 import com.project.llt.section.SectionService;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import static com.project.llt.constants.ExceptionMessageConstants.CATEGORY_NOT_FOUND;
 import static com.project.llt.mapper.CategoryMapper.convertToDto;
+import static com.project.llt.mapper.CategoryMapper.convertToDtoList;
 import static com.project.llt.mapper.CategoryMapper.convertToEntity;
 
 @Service
@@ -23,7 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> getAllCategories() {
         List<Category> categories = categoryDao.findAll();
-        return !categories.isEmpty() ? categories.stream().map(category -> convertToDto(modelMapper, category)).toList() : new ArrayList<>();
+        return convertToDtoList(modelMapper, categories);
     }
 
     @Override
@@ -56,6 +56,49 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategoryById(Long id) {
         Category categoryToDelete = getCategoryEntityById(id);
         categoryDao.delete(categoryToDelete);
+    }
+
+    @Override
+    public List<CategoryDto> getCategoriesByParentIdAndSectionIdAndName(Long parentId, Long sectionId, String name) {
+        List<Category> categories;
+        if(parentId == null) {
+            categories = name.isBlank()
+                  ? categoryDao.findByParentIdNullAndSectionId(sectionId)
+                  : categoryDao.findByParentIdNullAndSectionIdAndNameContaining(sectionId, name);
+        } else {
+            categories = name.isBlank()
+                  ? categoryDao.findByParentIdAndSectionId(parentId, sectionId)
+                  : categoryDao.findByParentIdAndSectionIdAndNameContaining(parentId, sectionId, name);
+        }
+        return convertToDtoList(modelMapper, categories);
+    }
+
+    @Override
+    public List<CategoryDto> getFavoriteCategories() {
+        List<Category> favorites = categoryDao.findFavorites();
+        return convertToDtoList(modelMapper, favorites);
+    }
+
+    @Override
+    public List<CategoryDto> getFavoritesByName(String name) {
+        List<Category> filteredFavorites = name.isBlank()
+              ? categoryDao.findFavorites()
+              : categoryDao.findFavoritesByNameContaining(name);
+        return convertToDtoList(modelMapper, filteredFavorites);
+    }
+
+    @Override
+    public CategoryDto saveFavorite(Long categoryId) {
+        Category favoriteToSave = getCategoryEntityById(categoryId);
+        favoriteToSave.setIsFavorite(true);
+        return convertToDto(modelMapper, categoryDao.update(favoriteToSave));
+    }
+
+    @Override
+    public CategoryDto deleteFavorite(Long categoryId) {
+        Category favoriteToDelete = getCategoryEntityById(categoryId);
+        favoriteToDelete.setIsFavorite(false);
+        return convertToDto(modelMapper, categoryDao.update(favoriteToDelete));
     }
 
     private Category getCategoryEntityById(Long id) {

@@ -44,4 +44,42 @@ public interface CategoryApi {
           @ApiResponse(responseCode = "500", description = "Internal server error")},
           parameters = @Parameter(name = "id", description = "ID of category to delete", example = "1"))
     ResponseEntity<Void> deleteCategoryById(Long id);
+
+    @Operation(summary = "Get categories by parent and section ID and filters by name", description = "Return list of categories by parent and section ID filtered by name", tags = {"category"}, responses = {
+          @ApiResponse(responseCode = "200", description = "Successful operation"),
+          @ApiResponse(responseCode = "404", description = "Invalid ID supplied"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")},
+          parameters = {
+                @Parameter(name = "parentId", description = "ID of parent category the filter will be applied to", example = "1"),
+                @Parameter(name = "sectionId", description = "ID of section of the category", example = "1"),
+                @Parameter(name = "name", description = "Name of category to filter by", example = "a")
+          })
+    ResponseEntity<List<CategoryDto>> getCategoriesByParentIdAndSectionIdAndName(Long parentId, Long sectionId, String name);
+
+    @Operation(summary = "Get all favorite categories", description = "Return a list of favorite categories", tags = {"category"}, responses = {
+          @ApiResponse(responseCode = "200", description = "Successful operation"),
+          @ApiResponse(responseCode = "404", description = "No categories found"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")})
+    ResponseEntity<List<CategoryDto>> getFavoriteCategories();
+
+    @Operation(summary = "Get filtered favorites by name", description = "Return a list of filtered favorites by name", tags = {"category"}, responses = {
+          @ApiResponse(responseCode = "200", description = "Successful operation"),
+          @ApiResponse(responseCode = "404", description = "Invalid ID supplied"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")},
+          parameters = @Parameter(name = "name", description = "Name filter for favorites", example = "a"))
+    ResponseEntity<List<CategoryDto>> getFavoritesByName(String name);
+
+    @Operation(summary = "Save category to favorites", description = "Save the category with the given ID to favorites", tags = {"category"}, responses = {
+          @ApiResponse(responseCode = "204", description = "Successful operation"),
+          @ApiResponse(responseCode = "404", description = "Invalid ID supplied"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")},
+          parameters = @Parameter(name = "categoryId", description = "ID of category to save to favorites", example = "1"))
+    ResponseEntity<CategoryDto> saveFavorite(Long categoryId);
+
+    @Operation(summary = "Delete category from favorites", description = "Delete the category with the given ID from favorites", tags = {"category"}, responses = {
+          @ApiResponse(responseCode = "204", description = "Successful operation"),
+          @ApiResponse(responseCode = "404", description = "Invalid ID supplied"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")},
+          parameters = @Parameter(name = "categoryId", description = "ID of category to delete from favorites", example = "1"))
+    ResponseEntity<CategoryDto> deleteFavorite(Long categoryId);
 }
