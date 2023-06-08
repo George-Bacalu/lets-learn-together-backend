@@ -1,6 +1,8 @@
 package com.project.llt.user;
 
+import com.project.llt.institution.Institution;
 import com.project.llt.institution.InstitutionDao;
+import com.project.llt.role.Role;
 import com.project.llt.role.RoleDao;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -29,17 +31,21 @@ public class UserDaoImpl implements UserDao {
         this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("users").usingGeneratedKeyColumns("id");
     }
 
-    RowMapper<User> userRowMapper = (resultSet, rowNumber) -> User.builder()
-          .id(resultSet.getLong("id"))
-          .name(resultSet.getString("name"))
-          .email(resultSet.getString("email"))
-          .password(resultSet.getString("password"))
-          .mobile(resultSet.getString("mobile"))
-          .address(resultSet.getString("address"))
-          .birthday(resultSet.getObject("birthday", LocalDate.class))
-          .institution(institutionDao.findById(resultSet.getObject("institution_id", Long.class)).orElse(null))
-          .role(roleDao.findById(resultSet.getObject("role_id", Long.class)).orElse(null))
-          .build();
+    RowMapper<User> userRowMapper = (resultSet, rowNumber) -> {
+        Institution institution = institutionDao.findById(resultSet.getObject("institution_id", Long.class)).orElse(null);
+        Role role = roleDao.findById(resultSet.getObject("role_id", Long.class)).orElse(null);
+        return User.builder()
+              .id(resultSet.getLong("id"))
+              .name(resultSet.getString("name"))
+              .email(resultSet.getString("email"))
+              .password(resultSet.getString("password"))
+              .mobile(resultSet.getString("mobile"))
+              .address(resultSet.getString("address"))
+              .birthday(resultSet.getObject("birthday", LocalDate.class))
+              .institution(institution)
+              .role(role)
+              .build();
+    };
 
     @Override
     public List<User> findAll() {

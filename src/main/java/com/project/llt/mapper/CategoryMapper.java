@@ -13,7 +13,9 @@ import org.modelmapper.ModelMapper;
 public class CategoryMapper {
 
     public static CategoryDto convertToDto(ModelMapper modelMapper, Category category) {
-        return modelMapper.map(category, CategoryDto.class);
+        CategoryDto categoryDto = modelMapper.map(category, CategoryDto.class);
+        categoryDto.setParentId(category.getId());
+        return categoryDto;
     }
 
     public static Category convertToEntity(ModelMapper modelMapper, CategoryDto categoryDto, CategoryDao categoryDao) {

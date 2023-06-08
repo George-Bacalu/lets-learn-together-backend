@@ -1,6 +1,7 @@
 package com.project.llt.feedback;
 
 import com.project.llt.feedback.enums.FeedbackType;
+import com.project.llt.user.User;
 import com.project.llt.user.UserDao;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -27,13 +28,16 @@ public class FeedbackDaoImpl implements FeedbackDao {
         this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("feedbacks").usingGeneratedKeyColumns("id");
     }
 
-    RowMapper<Feedback> feedbackRowMapper = (resultSet, rowNumber) -> Feedback.builder()
-          .id(resultSet.getLong("id"))
-          .type(FeedbackType.valueOf(resultSet.getString("type")))
-          .description(resultSet.getString("description"))
-          .sentAt(resultSet.getObject("sent_at", LocalDateTime.class))
-          .user(userDao.findById(resultSet.getObject("user_id", Long.class)).orElse(null))
-          .build();
+    RowMapper<Feedback> feedbackRowMapper = (resultSet, rowNumber) -> {
+        User user = userDao.findById(resultSet.getObject("user_id", Long.class)).orElse(null);
+        return Feedback.builder()
+              .id(resultSet.getLong("id"))
+              .type(FeedbackType.valueOf(resultSet.getString("type")))
+              .description(resultSet.getString("description"))
+              .sentAt(resultSet.getObject("sent_at", LocalDateTime.class))
+              .user(user)
+              .build();
+    };
 
     @Override
     public List<Feedback> findAll() {

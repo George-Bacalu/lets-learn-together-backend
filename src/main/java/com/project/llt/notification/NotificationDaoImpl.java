@@ -1,5 +1,6 @@
 package com.project.llt.notification;
 
+import com.project.llt.user.User;
 import com.project.llt.user.UserDao;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -26,14 +27,18 @@ public class NotificationDaoImpl implements NotificationDao {
         this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("notifications").usingGeneratedKeyColumns("id");
     }
 
-    RowMapper<Notification> notificationRowMapper = (resultSet, rowNumber) -> Notification.builder()
-          .id(resultSet.getLong("id"))
-          .message(resultSet.getString("message"))
-          .isRead(resultSet.getBoolean("is_read"))
-          .sentAt(resultSet.getObject("sent_at", LocalDateTime.class))
-          .sender(userDao.findById(resultSet.getObject("sender_id", Long.class)).orElse(null))
-          .receiver(userDao.findById(resultSet.getObject("receiver_id", Long.class)).orElse(null))
-          .build();
+    RowMapper<Notification> notificationRowMapper = (resultSet, rowNumber) -> {
+        User sender = userDao.findById(resultSet.getObject("sender_id", Long.class)).orElse(null);
+        User receiver = userDao.findById(resultSet.getObject("receiver_id", Long.class)).orElse(null);
+        return Notification.builder()
+              .id(resultSet.getLong("id"))
+              .message(resultSet.getString("message"))
+              .isRead(resultSet.getBoolean("is_read"))
+              .sentAt(resultSet.getObject("sent_at", LocalDateTime.class))
+              .sender(sender)
+              .receiver(receiver)
+              .build();
+    };
 
     @Override
     public List<Notification> findAll() {
