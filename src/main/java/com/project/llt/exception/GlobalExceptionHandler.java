@@ -6,6 +6,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import static com.project.llt.constants.ExceptionMessageConstants.DATA_ACCESS_VIOLATION;
 import static com.project.llt.constants.ExceptionMessageConstants.HTTP_MEDIA_TYPE_NOT_SUPPORTED;
 import static com.project.llt.constants.ExceptionMessageConstants.HTTP_REQUEST_METHOD_NOT_SUPPORTED;
 import static com.project.llt.constants.ExceptionMessageConstants.INVALID_REQUEST;
@@ -74,6 +76,19 @@ public class GlobalExceptionHandler {
               .body(ErrorResponse.builder()
                     .statusCode(BAD_REQUEST.value())
                     .message(String.format(HTTP_MEDIA_TYPE_NOT_SUPPORTED, exception.getMessage()))
+                    .timestamp(LocalDateTime.now())
+                    .build());
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ErrorResponse> handleDataAccessException(DataAccessException exception) {
+        log.error(String.format(DATA_ACCESS_VIOLATION, exception.getMessage()));
+        return ResponseEntity
+              .status(BAD_REQUEST)
+              .contentType(APPLICATION_JSON)
+              .body(ErrorResponse.builder()
+                    .statusCode(BAD_REQUEST.value())
+                    .message(String.format(DATA_ACCESS_VIOLATION, exception.getMessage()))
                     .timestamp(LocalDateTime.now())
                     .build());
     }

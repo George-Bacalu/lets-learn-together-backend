@@ -19,13 +19,21 @@ import static com.project.llt.constants.ExceptionMessageConstants.CATEGORY_NOT_F
 import static com.project.llt.constants.IdentifierConstants.INVALID_ID;
 import static com.project.llt.constants.IdentifierConstants.VALID_ID;
 import static com.project.llt.mapper.CategoryMapper.convertToDto;
+import static com.project.llt.mapper.CategoryMapper.convertToDtoList;
 import static com.project.llt.mock.CategoryMock.getMockedCategories;
-import static com.project.llt.mock.CategoryMock.getMockedCategory1;
-import static com.project.llt.mock.CategoryMock.getMockedCategory2;
+import static com.project.llt.mock.CategoryMock.getMockedCategoryOne;
+import static com.project.llt.mock.CategoryMock.getMockedCategoryTwo;
+import static com.project.llt.mock.CategoryMock.getMockedChildrenCategoriesAlphabet;
+import static com.project.llt.mock.CategoryMock.getMockedChildrenCategoriesAlphabetFilteredByName;
+import static com.project.llt.mock.CategoryMock.getMockedFavoriteCategories;
+import static com.project.llt.mock.CategoryMock.getMockedFavoriteCategoriesFilteredByName;
+import static com.project.llt.mock.CategoryMock.getMockedParentCategories;
+import static com.project.llt.mock.CategoryMock.getMockedParentCategoriesFilteredByName;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -48,21 +56,45 @@ class CategoryServiceImplTest {
     @Captor
     private ArgumentCaptor<Category> categoryCaptor;
 
-    private Category category1;
-    private Category category2;
+    private Category categoryOne;
+    private Category categoryTwo;
     private List<Category> categories;
-    private CategoryDto categoryDto1;
-    private CategoryDto categoryDto2;
+    private List<Category> parentCategories;
+    private List<Category> filteredParentCategories;
+    private List<Category> childrenCategoriesAlphabet;
+    private List<Category> filteredChildrenCategoriesAlphabet;
+    private List<Category> favoriteCategories;
+    private List<Category> filteredFavoriteCategories;
+    private CategoryDto categoryDtoOne;
+    private CategoryDto categoryDtoTwo;
     private List<CategoryDto> categoryDtos;
+    private List<CategoryDto> parentCategoryDtos;
+    private List<CategoryDto> filteredParentCategoryDtos;
+    private List<CategoryDto> childrenCategoryDtosAlphabet;
+    private List<CategoryDto> filteredChildrenCategoryDtosAlphabet;
+    private List<CategoryDto> favoriteCategoryDtos;
+    private List<CategoryDto> filteredFavoriteCategoryDtos;
 
     @BeforeEach
     void setUp() {
-        category1 = getMockedCategory1();
-        category2 = getMockedCategory2();
+        categoryOne = getMockedCategoryOne();
+        categoryTwo = getMockedCategoryTwo();
         categories = getMockedCategories();
-        categoryDto1 = convertToDto(modelMapper, category1);
-        categoryDto2 = convertToDto(modelMapper, category2);
-        categoryDtos = categories.stream().map(category -> convertToDto(modelMapper, category)).toList();
+        parentCategories = getMockedParentCategories();
+        filteredParentCategories = getMockedParentCategoriesFilteredByName();
+        childrenCategoriesAlphabet = getMockedChildrenCategoriesAlphabet();
+        filteredChildrenCategoriesAlphabet = getMockedChildrenCategoriesAlphabetFilteredByName();
+        favoriteCategories = getMockedFavoriteCategories();
+        filteredFavoriteCategories = getMockedFavoriteCategoriesFilteredByName();
+        categoryDtoOne = convertToDto(modelMapper, categoryOne);
+        categoryDtoTwo = convertToDto(modelMapper, categoryTwo);
+        categoryDtos = convertToDtoList(modelMapper, categories);
+        parentCategoryDtos = convertToDtoList(modelMapper, parentCategories);
+        filteredParentCategoryDtos = convertToDtoList(modelMapper, filteredParentCategories);
+        childrenCategoryDtosAlphabet = convertToDtoList(modelMapper, childrenCategoriesAlphabet);
+        filteredChildrenCategoryDtosAlphabet = convertToDtoList(modelMapper, filteredChildrenCategoriesAlphabet);
+        favoriteCategoryDtos = convertToDtoList(modelMapper, favoriteCategories);
+        filteredFavoriteCategoryDtos = convertToDtoList(modelMapper, filteredFavoriteCategories);
     }
 
     @Test
@@ -74,9 +106,9 @@ class CategoryServiceImplTest {
 
     @Test
     void getCategoryById_withValidId_shouldReturnCategoryWithGivenId() {
-        given(categoryDao.findById(anyLong())).willReturn(Optional.ofNullable(category1));
+        given(categoryDao.findById(anyLong())).willReturn(Optional.ofNullable(categoryOne));
         CategoryDto result = categoryService.getCategoryById(VALID_ID);
-        assertThat(result).isEqualTo(categoryDto1);
+        assertThat(result).isEqualTo(categoryDtoOne);
     }
 
     @Test
@@ -88,25 +120,25 @@ class CategoryServiceImplTest {
 
     @Test
     void saveCategory_shouldAddCategoryToList() {
-        given(categoryDao.save(any(Category.class))).willReturn(category1);
-        CategoryDto result = categoryService.saveCategory(categoryDto1);
+        given(categoryDao.save(any(Category.class))).willReturn(categoryOne);
+        CategoryDto result = categoryService.saveCategory(categoryDtoOne);
         verify(categoryDao).save(categoryCaptor.capture());
         assertThat(result).isEqualTo(convertToDto(modelMapper, categoryCaptor.getValue()));
     }
 
     @Test
     void updateCategoryById_withValidId_shouldUpdateCategoryWithGivenId() {
-        Category category = category2; category.setId(VALID_ID);
-        given(categoryDao.findById(anyLong())).willReturn(Optional.ofNullable(category1));
+        Category category = categoryTwo; category.setId(VALID_ID);
+        given(categoryDao.findById(anyLong())).willReturn(Optional.ofNullable(categoryTwo));
         given(categoryDao.update(any(Category.class))).willReturn(category);
-        CategoryDto result = categoryService.updateCategoryById(categoryDto2, VALID_ID);
+        CategoryDto result = categoryService.updateCategoryById(categoryDtoTwo, VALID_ID);
         verify(categoryDao).update(categoryCaptor.capture());
         assertThat(result).isEqualTo(convertToDto(modelMapper, categoryCaptor.getValue()));
     }
 
     @Test
     void updateCategoryById_withInvalidId_shouldThrowException() {
-        assertThatThrownBy(() -> categoryService.updateCategoryById(categoryDto2, INVALID_ID))
+        assertThatThrownBy(() -> categoryService.updateCategoryById(categoryDtoTwo, INVALID_ID))
               .isInstanceOf(ResourceNotFoundException.class)
               .hasMessage(String.format(CATEGORY_NOT_FOUND, INVALID_ID));
         verify(categoryDao, never()).update(any(Category.class));
@@ -114,9 +146,9 @@ class CategoryServiceImplTest {
 
     @Test
     void deleteCategoryById_withValidId_shouldRemoveCategoryWithGivenIdFromList() {
-        given(categoryDao.findById(anyLong())).willReturn(Optional.ofNullable(category1));
+        given(categoryDao.findById(anyLong())).willReturn(Optional.ofNullable(categoryOne));
         categoryService.deleteCategoryById(VALID_ID);
-        verify(categoryDao).delete(category1);
+        verify(categoryDao).delete(categoryOne);
     }
 
     @Test
@@ -125,5 +157,74 @@ class CategoryServiceImplTest {
               .isInstanceOf(ResourceNotFoundException.class)
               .hasMessage(String.format(CATEGORY_NOT_FOUND, INVALID_ID));
         verify(categoryDao, never()).delete(any(Category.class));
+    }
+
+    @Test
+    void getCategoriesByParentIdAndSectionIdAndName_whenParentIdNullAndNameBlank_shouldReturnListOfParentCategories() {
+        given(categoryDao.findByParentIdNullAndSectionId(anyLong())).willReturn(parentCategories);
+        List<CategoryDto> result = categoryService.getCategoriesByParentIdAndSectionIdAndName(null, VALID_ID, "");
+        assertThat(result).isEqualTo(parentCategoryDtos);
+    }
+
+    @Test
+    void getCategoriesByParentIdAndSectionIdAndName_whenParentIdNullAndNameNotBlank_shouldReturnListOfParentCategoriesFilteredByName() {
+        given(categoryDao.findByParentIdNullAndSectionIdAndNameContaining(anyLong(), anyString())).willReturn(filteredParentCategories);
+        List<CategoryDto> result = categoryService.getCategoriesByParentIdAndSectionIdAndName(null, VALID_ID, "a");
+        assertThat(result).isEqualTo(filteredParentCategoryDtos);
+    }
+
+    @Test
+    void getCategoriesByParentIdAndSectionIdAndName_whenParentIdNotNullAndNameBlank_shouldReturnListOfChildrenCategories() {
+        given(categoryDao.findByParentIdAndSectionId(anyLong(), anyLong())).willReturn(childrenCategoriesAlphabet);
+        List<CategoryDto> result = categoryService.getCategoriesByParentIdAndSectionIdAndName(VALID_ID, VALID_ID, "");
+        assertThat(result).isEqualTo(childrenCategoryDtosAlphabet);
+    }
+
+    @Test
+    void getCategoriesByParentIdAndSectionIdAndName_whenParentIdNotNullAndNameNotBlank_shouldReturnListOfChildrenCategoriesFilteredByName() {
+        given(categoryDao.findByParentIdAndSectionIdAndNameContaining(anyLong(), anyLong(), anyString())).willReturn(filteredChildrenCategoriesAlphabet);
+        List<CategoryDto> result = categoryService.getCategoriesByParentIdAndSectionIdAndName(VALID_ID, VALID_ID, "a");
+        assertThat(result).isEqualTo(filteredChildrenCategoryDtosAlphabet);
+    }
+
+    @Test
+    void getFavoriteCategories_shouldReturnListOfFavorites() {
+        given(categoryDao.findFavorites()).willReturn(favoriteCategories);
+        List<CategoryDto> result = categoryService.getFavoriteCategories();
+        assertThat(result).isEqualTo(favoriteCategoryDtos);
+    }
+
+    @Test
+    void getFavoritesByName_whenNameIsBlank_shouldReturnListOfFavorites() {
+        given(categoryDao.findFavorites()).willReturn(favoriteCategories);
+        List<CategoryDto> result = categoryService.getFavoritesByName("");
+        assertThat(result).isEqualTo(favoriteCategoryDtos);
+    }
+
+    @Test
+    void getFavoritesByName_whenNameIsNotBlank_shouldReturnListOfFavoritesFilteredByName() {
+        given(categoryDao.findFavoritesByNameContaining(anyString())).willReturn(filteredFavoriteCategories);
+        List<CategoryDto> result = categoryService.getFavoritesByName("a");
+        assertThat(result).isEqualTo(filteredFavoriteCategoryDtos);
+    }
+
+    @Test
+    void saveFavorite_shouldAddFavoriteCategoryToList() {
+        Category category = categoryOne; category.setIsFavorite(true);
+        given(categoryDao.findById(anyLong())).willReturn(Optional.ofNullable(categoryOne));
+        given(categoryDao.update(any(Category.class))).willReturn(category);
+        CategoryDto result = categoryService.saveFavorite(categoryOne.getId());
+        verify(categoryDao).update(categoryCaptor.capture());
+        assertThat(result).isEqualTo(convertToDto(modelMapper, categoryCaptor.getValue()));
+    }
+
+    @Test
+    void deleteFavorite_shouldAddFavoriteCategoryToList() {
+        Category category = categoryOne; category.setIsFavorite(false);
+        given(categoryDao.findById(anyLong())).willReturn(Optional.ofNullable(categoryOne));
+        given(categoryDao.update(any(Category.class))).willReturn(category);
+        CategoryDto result = categoryService.deleteFavorite(categoryOne.getId());
+        verify(categoryDao).update(categoryCaptor.capture());
+        assertThat(result).isEqualTo(convertToDto(modelMapper, categoryCaptor.getValue()));
     }
 }

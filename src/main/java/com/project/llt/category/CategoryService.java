@@ -13,4 +13,14 @@ public interface CategoryService {
     CategoryDto updateCategoryById(CategoryDto categoryDto, Long id);
 
     void deleteCategoryById(Long id);
+
+    List<CategoryDto> getCategoriesByParentIdAndSectionIdAndName(Long parentId, Long sectionId, String name);
+
+    List<CategoryDto> getFavoriteCategories();
+
+    List<CategoryDto> getFavoritesByName(String name);
+
+    CategoryDto saveFavorite(Long categoryId);
+
+    CategoryDto deleteFavorite(Long categoryId);
 }
